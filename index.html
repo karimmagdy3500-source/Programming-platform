@@ -9,14 +9,14 @@
 </head>
 <body class="bg-slate-900 text-white min-h-screen flex flex-col items-center p-6">
 
-  <div id="app" class="w-full max-w-2xl bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-700 mt-6">
+  <div id="app" class="w-full max-w-3xl bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-700 mt-4">
     <div id="content" class="text-center text-slate-300">جاري التحميل...</div>
   </div>
 
   <script>
-    // ضع بيانات مشروعك من Supabase هنا
-const SUPABASE_URL = 'https://pliaszamxbbeeuhjfyww.supabase.co';
+    const SUPABASE_URL = 'https://pliaszamxbbeeuhjfyww.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_ezTt6H2pz8LxSV0qHzvhSQ_Rn5tpkMx';
+
     const { createClient } = window.supabase;
     const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -24,18 +24,27 @@ const SUPABASE_URL = 'https://pliaszamxbbeeuhjfyww.supabase.co';
 
     let currentUser = null;
     let studentName = '';
+    let activeTab = 'quiz'; // 'quiz' أو 'js_lab'
     let questions = [];
     let currentIndex = 0;
     let score = 0;
     let selectedOption = null;
-    let authMode = 'login'; // 'login' أو 'signup'
+    let authMode = 'login';
+
+    const defaultJsCode = `// جرّب اكتب كود JavaScript هنا واضغط "تشغيل"
+let name = "أهلاً بك يا بطل";
+let x = 10;
+let y = 5;
+
+console.log(name);
+console.log("مجموع العددين =", x + y);`;
 
     async function init() {
       const { data: { session } } = await db.auth.getSession();
       if (session?.user) {
         currentUser = session.user;
         await loadStudentProfile();
-        await startQuiz();
+        renderMainLayout();
       } else {
         renderAuthScreen();
       }
@@ -56,7 +65,7 @@ const SUPABASE_URL = 'https://pliaszamxbbeeuhjfyww.supabase.co';
       appEl.innerHTML = `
         <h1 class="text-2xl font-bold text-indigo-400 mb-2 text-center">منصة البرمجة - الصف الأول الثانوي</h1>
         <p class="text-slate-400 text-sm text-center mb-6">
-          ${isLogin ? 'سجّل دخولك بحسابك لبدء الاختبار وحفظ نتيجتك' : 'أنشئ حساباً جديداً كطالب وابدأ التدريب'}
+          ${isLogin ? 'سجّل دخولك بحسابك لبدء الاختبار وتجربة الأكواد' : 'أنشئ حساباً جديداً كطالب وابدأ التدريب'}
         </p>
 
         <form id="authForm" class="space-y-4">
@@ -121,13 +130,13 @@ const SUPABASE_URL = 'https://pliaszamxbbeeuhjfyww.supabase.co';
           }
           if (!data.session) {
             errorBox.className = 'text-emerald-400 text-sm';
-            errorBox.textContent = 'تم إنشاء الحساب! راجع بريدك الإلكتروني لتفعيل الحساب ثم سجل الدخول.';
+            errorBox.textContent = 'تم إنشاء الحساب! يمكنك الآن تسجيل الدخول.';
             errorBox.classList.remove('hidden');
             return;
           }
           currentUser = data.user;
           await loadStudentProfile();
-          await startQuiz();
+          renderMainLayout();
         } else {
           const { data, error } = await db.auth.signInWithPassword({ email, password });
           if (error) {
@@ -137,7 +146,113 @@ const SUPABASE_URL = 'https://pliaszamxbbeeuhjfyww.supabase.co';
           }
           currentUser = data.user;
           await loadStudentProfile();
-          await startQuiz();
+          renderMainLayout();
+        }
+      });
+    }
+
+    function renderMainLayout() {
+      appEl.innerHTML = `
+        <div class="flex flex-wrap justify-between items-center gap-3 pb-4 mb-5 border-b border-slate-700">
+          <div>
+            <h1 class="text-lg font-bold text-indigo-400">منصة البرمجة - أولى ثانوي</h1>
+            <p class="text-xs text-slate-400">مرحباً، <span class="text-slate-200 font-semibold">${studentName}</span></p>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button id="tabQuiz" class="px-3 py-1.5 rounded-lg text-sm font-semibold transition ${
+              activeTab === 'quiz' ? 'bg-indigo-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+            }">
+              الاختبارات
+            </button>
+            <button id="tabJs" class="px-3 py-1.5 rounded-lg text-sm font-semibold transition ${
+              activeTab === 'js_lab' ? 'bg-emerald-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+            }">
+              معمل JavaScript
+            </button>
+            <button id="logoutBtn" class="text-xs bg-slate-700 hover:bg-rose-600 px-3 py-2 rounded-lg transition">
+              خروج
+            </button>
+          </div>
+        </div>
+
+        <div id="tabBody"></div>
+      `;
+
+      document.getElementById('tabQuiz').addEventListener('click', () => {
+        activeTab = 'quiz';
+        renderMainLayout();
+      });
+
+      document.getElementById('tabJs').addEventListener('click', () => {
+        activeTab = 'js_lab';
+        renderMainLayout();
+      });
+
+      document.getElementById('logoutBtn').addEventListener('click', async () => {
+        await db.auth.signOut();
+        currentUser = null;
+        renderAuthScreen();
+      });
+
+      if (activeTab === 'quiz') {
+        startQuiz();
+      } else {
+        renderJsLab();
+      }
+    }
+
+    function renderJsLab() {
+      const tabBody = document.getElementById('tabBody');
+      tabBody.innerHTML = `
+        <div class="mb-3 flex flex-wrap justify-between items-center gap-2">
+          <h2 class="text-lg font-bold text-emerald-400">معمل تجربة أكواد JavaScript</h2>
+          <div class="flex gap-2">
+            <button id="runJsBtn" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-1.5 rounded-lg text-sm font-bold transition">
+              ▶ تشغيل الكود
+            </button>
+            <button id="clearOutBtn" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-1.5 rounded-lg text-sm transition">
+              مسح المخرجات
+            </button>
+          </div>
+        </div>
+
+        <textarea id="jsEditor" dir="ltr" rows="9"
+          class="w-full p-4 rounded-lg bg-slate-950 text-emerald-300 font-mono text-sm border border-slate-700 focus:outline-none focus:border-emerald-500 mb-4 text-left">${defaultJsCode}</textarea>
+
+        <div>
+          <div class="text-xs text-slate-400 mb-1.5">المخرجات (Console Output):</div>
+          <pre id="jsOutput" dir="ltr"
+            class="w-full min-h-[110px] max-h-60 overflow-y-auto p-4 rounded-lg bg-black text-slate-200 font-mono text-sm border border-slate-800 text-left">اضغط "تشغيل الكود" لرؤية النتيجة هنا...</pre>
+        </div>
+      `;
+
+      const editorEl = document.getElementById('jsEditor');
+      const outputEl = document.getElementById('jsOutput');
+
+      document.getElementById('clearOutBtn').addEventListener('click', () => {
+        outputEl.className = 'w-full min-h-[110px] max-h-60 overflow-y-auto p-4 rounded-lg bg-black text-slate-400 font-mono text-sm border border-slate-800 text-left';
+        outputEl.textContent = 'تم مسح المخرجات.';
+      });
+
+      document.getElementById('runJsBtn').addEventListener('click', () => {
+        const code = editorEl.value;
+        const logs = [];
+
+        const customConsole = {
+          log: (...args) => logs.push(args.map(a => typeof a === 'object' ? JSON.stringify(a, null, 2) : String(a)).join(' ')),
+          warn: (...args) => logs.push('[تنبيه] ' + args.join(' ')),
+          error: (...args) => logs.push('[خطأ] ' + args.join(' '))
+        };
+
+        try {
+          const runner = new Function('console', code);
+          runner(customConsole);
+          outputEl.className = 'w-full min-h-[110px] max-h-60 overflow-y-auto p-4 rounded-lg bg-black text-emerald-400 font-mono text-sm border border-slate-800 text-left';
+          outputEl.textContent = logs.length > 0 ? logs.join('\n') : 'تم تنفيذ الكود بنجاح (لا توجد مخرجات console.log).';
+        } catch (err) {
+          outputEl.className = 'w-full min-h-[110px] max-h-60 overflow-y-auto p-4 rounded-lg bg-black text-rose-400 font-mono text-sm border border-rose-900 text-left';
+          outputEl.textContent = 'خطأ في الكود:\n' + err.message;
         }
       });
     }
@@ -147,17 +262,19 @@ const SUPABASE_URL = 'https://pliaszamxbbeeuhjfyww.supabase.co';
       score = 0;
       selectedOption = null;
 
-      appEl.innerHTML = `<div class="text-center text-slate-300 py-8">جاري تحميل الأسئلة...</div>`;
+      const tabBody = document.getElementById('tabBody');
+      tabBody.innerHTML = `<div class="text-center text-slate-300 py-8">جاري تحميل الأسئلة...</div>`;
+
       const { data, error } = await db.from('questions').select('*').order('id', { ascending: true });
 
       if (error) {
-        appEl.innerHTML = `<p class="text-rose-400 text-center">خطأ في تحميل الأسئلة: ${error.message}</p>`;
+        tabBody.innerHTML = `<p class="text-rose-400 text-center">خطأ في تحميل الأسئلة: ${error.message}</p>`;
         return;
       }
 
       questions = data || [];
       if (questions.length === 0) {
-        appEl.innerHTML = `<p class="text-center">لا توجد أسئلة مضافة حالياً.</p>`;
+        tabBody.innerHTML = `<p class="text-center">لا توجد أسئلة مضافة حالياً.</p>`;
         return;
       }
 
@@ -165,6 +282,7 @@ const SUPABASE_URL = 'https://pliaszamxbbeeuhjfyww.supabase.co';
     }
 
     function renderQuestion() {
+      const tabBody = document.getElementById('tabBody');
       if (currentIndex >= questions.length) {
         finishQuiz();
         return;
@@ -187,19 +305,11 @@ const SUPABASE_URL = 'https://pliaszamxbbeeuhjfyww.supabase.co';
         `;
       }).join('');
 
-      appEl.innerHTML = `
-        <div class="flex flex-wrap justify-between items-center gap-2 pb-4 mb-4 border-b border-slate-700">
-          <div>
-            <h1 class="text-lg font-bold text-indigo-400">منصة البرمجة - أولى ثانوي</h1>
-            <p class="text-xs text-slate-400">مرحباً، <span class="text-slate-200 font-semibold">${studentName}</span></p>
-          </div>
-          <div class="flex items-center gap-2">
-            <span class="bg-indigo-900 text-indigo-200 px-3 py-1 rounded-full text-sm">النقاط: ${score}</span>
-            <button id="logoutBtn" class="text-xs bg-slate-700 hover:bg-rose-600 px-3 py-1.5 rounded-lg transition">خروج</button>
-          </div>
+      tabBody.innerHTML = `
+        <div class="flex justify-between items-center text-slate-400 text-sm mb-3">
+          <span>السؤال ${currentIndex + 1} من ${questions.length}</span>
+          <span class="bg-indigo-900 text-indigo-200 px-3 py-1 rounded-full text-xs">النقاط: ${score}</span>
         </div>
-
-        <div class="text-slate-400 text-sm mb-3">السؤال ${currentIndex + 1} من ${questions.length}</div>
         <h2 class="text-xl font-semibold mb-4 text-right">${q.title}</h2>
         ${codeBlock}
         <div class="space-y-3 mb-4">${optionsHtml}</div>
@@ -208,12 +318,6 @@ const SUPABASE_URL = 'https://pliaszamxbbeeuhjfyww.supabase.co';
           ${currentIndex + 1 === questions.length ? 'إنهاء وحفظ النتيجة' : 'السؤال التالي ←'}
         </button>
       `;
-
-      document.getElementById('logoutBtn').addEventListener('click', async () => {
-        await db.auth.signOut();
-        currentUser = null;
-        renderAuthScreen();
-      });
 
       document.querySelectorAll('.opt-btn').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -253,7 +357,8 @@ const SUPABASE_URL = 'https://pliaszamxbbeeuhjfyww.supabase.co';
     }
 
     async function finishQuiz() {
-      appEl.innerHTML = `<div class="text-center text-slate-300 py-8">جاري حفظ نتيجتك...</div>`;
+      const tabBody = document.getElementById('tabBody');
+      tabBody.innerHTML = `<div class="text-center text-slate-300 py-8">جاري حفظ نتيجتك...</div>`;
 
       const { error: insertError } = await db.from('quiz_results').insert({
         student_id: currentUser.id,
@@ -278,7 +383,7 @@ const SUPABASE_URL = 'https://pliaszamxbbeeuhjfyww.supabase.co';
         `;
       }).join('');
 
-      appEl.innerHTML = `
+      tabBody.innerHTML = `
         <div class="text-center">
           <h2 class="text-3xl font-bold mb-2 text-emerald-400">أحسنت يا ${studentName}!</h2>
           <p class="text-xl mb-2">درجتك في هذا الاختبار: <span class="font-bold text-indigo-300">${score} من ${questions.length}</span></p>
@@ -292,18 +397,12 @@ const SUPABASE_URL = 'https://pliaszamxbbeeuhjfyww.supabase.co';
           <div class="space-y-2">${historyRows || '<p class="text-slate-400 text-sm">لا توجد نتائج سابقة.</p>'}</div>
         </div>
 
-        <div class="flex gap-3">
-          <button id="retryBtn" class="flex-1 bg-indigo-600 hover:bg-indigo-500 py-3 rounded-lg font-bold transition">إعادة الاختبار</button>
-          <button id="logoutEndBtn" class="bg-slate-700 hover:bg-rose-600 px-5 py-3 rounded-lg font-bold transition">خروج</button>
-        </div>
+        <button id="retryBtn" class="w-full bg-indigo-600 hover:bg-indigo-500 py-3 rounded-lg font-bold transition">
+          إعادة الاختبار
+        </button>
       `;
 
       document.getElementById('retryBtn').addEventListener('click', startQuiz);
-      document.getElementById('logoutEndBtn').addEventListener('click', async () => {
-        await db.auth.signOut();
-        currentUser = null;
-        renderAuthScreen();
-      });
     }
 
     init();
