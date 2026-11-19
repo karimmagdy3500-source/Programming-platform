@@ -19,7 +19,7 @@
       <div id="authArea" class="flex items-center gap-2"></div>
     </header>
 
-    <!-- لوحة المعلم / إضافة أسئلة جديدة (تظهر عند فتحها أو للمعلم) -->
+    <!-- لوحة المعلم / إضافة أسئلة جديدة (تظهر للأدمن فقط) -->
     <section id="adminSection" class="bg-slate-800 p-6 rounded-xl border border-indigo-500/50 hidden">
       <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-3">
         <div>
@@ -88,7 +88,7 @@
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-bold text-indigo-300">اختبارات مادة البرمجة</h2>
         <div class="flex items-center gap-3">
-          <button id="toggleAdminBtn" type="button" class="text-xs bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 px-3 py-1.5 rounded-lg border border-indigo-700 transition">
+          <button id="toggleAdminBtn" type="button" class="hidden text-xs bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 px-3 py-1.5 rounded-lg border border-indigo-700 transition">
             + إضافة سؤال
           </button>
           <span id="scoreBadge" class="bg-indigo-950 text-indigo-300 px-3 py-1 rounded-full text-sm">النقاط: 0</span>
@@ -138,6 +138,7 @@ console.log("ناتج الضرب =", a * b);</textarea>
 
     let currentUser = null;
     let studentName = '';
+    let isAdmin = false;
     let questions = [];
     let currentIndex = 0;
     let score = 0;
@@ -172,14 +173,18 @@ console.log("ناتج الضرب =", a * b);</textarea>
       }
     });
 
-    // التحكم في إظهار/إخفاء لوحة الإدارة
+    // التحكم في إظهار/إخفاء لوحة الإدارة (للأدمن فقط)
     const adminSection = document.getElementById('adminSection');
-    document.getElementById('toggleAdminBtn').addEventListener('click', () => {
+    const toggleAdminBtn = document.getElementById('toggleAdminBtn');
+
+    toggleAdminBtn.addEventListener('click', () => {
+      if (!isAdmin) return;
       adminSection.classList.toggle('hidden');
       if (!adminSection.classList.contains('hidden')) {
         adminSection.scrollIntoView({ behavior: 'smooth' });
       }
     });
+
     document.getElementById('closeAdminBtn').addEventListener('click', () => {
       adminSection.classList.add('hidden');
     });
@@ -187,6 +192,8 @@ console.log("ناتج الضرب =", a * b);</textarea>
     // نموذج إضافة سؤال لـ Supabase
     document.getElementById('addQuestionForm').addEventListener('submit', async (e) => {
       e.preventDefault();
+      if (!isAdmin) return;
+
       const adminMsg = document.getElementById('adminMsg');
       adminMsg.className = 'text-xs text-slate-400';
       adminMsg.textContent = 'جاري حفظ السؤال...';
@@ -200,7 +207,7 @@ console.log("ناتج الضرب =", a * b);</textarea>
       const correct_option = document.getElementById('correctOpt').value;
       const explanation = document.getElementById('qExplanation').value.trim() || null;
 
-      const { data, error } = await db.from('questions').insert([{
+      const { error } = await db.from('questions').insert([{
         title,
         code_snippet,
         option_a,
@@ -226,9 +233,24 @@ console.log("ناتج الضرب =", a * b);</textarea>
       const { data: { session } } = await db.auth.getSession();
       if (session?.user) {
         currentUser = session.user;
-        const { data } = await db.from('profiles').select('full_name').eq('id', currentUser.id).single();
+        const { data } = await db
+          .from('profiles')
+          .select('full_name, role')
+          .eq('id', currentUser.id)
+          .single();
+
         studentName = data?.full_name || currentUser.user_metadata?.full_name || currentUser.email;
-        document.getElementById('userStatus').textContent = `مرحباً، ${studentName} — درجاتك تُحفظ في حسابك`;
+        isAdmin = data?.role === 'admin';
+
+        if (isAdmin) {
+          toggleAdminBtn.classList.remove('hidden');
+          document.getElementById('userStatus').textContent = `مرحباً، ${studentName} (حساب أدمن — يمكنك إضافة الأسئلة)`;
+        } else {
+          toggleAdminBtn.classList.add('hidden');
+          adminSection.classList.add('hidden');
+          document.getElementById('userStatus').textContent = `مرحباً، ${studentName} — درجاتك تُحفظ في حسابك`;
+        }
+
         document.getElementById('authArea').innerHTML = `
           <button id="logoutBtn" class="bg-slate-700 hover:bg-rose-600 px-3 py-2 rounded-lg text-xs font-bold transition">تسجيل خروج</button>
         `;
@@ -237,6 +259,9 @@ console.log("ناتج الضرب =", a * b);</textarea>
           location.reload();
         });
       } else {
+        isAdmin = false;
+        toggleAdminBtn.classList.add('hidden');
+        adminSection.classList.add('hidden');
         document.getElementById('authArea').innerHTML = `
           <button id="openLoginBtn" class="bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded-lg text-xs font-bold transition">تسجيل دخول / حساب جديد</button>
         `;
@@ -308,7 +333,7 @@ console.log("ناتج الضرب =", a * b);</textarea>
       }
       questions = data || [];
       if (!questions.length) {
-        document.getElementById('quizContent').innerHTML = '<p class="text-slate-400">لا توجد أسئلة حالياً. اضغط على "+ إضافة سؤال" بالأعلى لإضافة أول سؤال!</p>';
+        document.getElementById('quizContent').innerHTML = '<p class="text-slate-400">لا توجد أسئلة حالياً.</p>';
         return;
       }
       renderQuestion();
