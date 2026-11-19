@@ -7,10 +7,126 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="bg-slate-900 text-white min-h-screen flex flex-col items-center p-6">
+<body class="bg-slate-900 text-white min-h-screen p-6">
 
-  <div id="app" class="w-full max-w-3xl bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-700 mt-4">
-    <div id="content" class="text-center text-slate-300">جاري التحميل...</div>
+  <div class="max-w-4xl mx-auto space-y-8">
+    <!-- رأس الصفحة وحالة الحساب -->
+    <header class="bg-slate-800 p-5 rounded-xl border border-slate-700 flex flex-wrap justify-between items-center gap-4">
+      <div>
+        <h1 class="text-2xl font-bold text-indigo-400">منصة البرمجة - الصف الأول الثانوي</h1>
+        <p id="userStatus" class="text-xs text-slate-400 mt-1">وضع التجربة المباشرة (يمكنك تسجيل الدخول لحفظ درجاتك)</p>
+      </div>
+      <div id="authArea" class="flex items-center gap-2"></div>
+    </header>
+
+    <!-- لوحة المعلم / إضافة أسئلة جديدة (تظهر عند فتحها أو للمعلم) -->
+    <section id="adminSection" class="bg-slate-800 p-6 rounded-xl border border-indigo-500/50 hidden">
+      <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-3">
+        <div>
+          <h2 class="text-xl font-bold text-indigo-300">لوحة إضافة سؤال جديد (Admin)</h2>
+          <p class="text-xs text-slate-400">أضف الأسئلة مباشرة لجدول Supabase ليراها كافة الطلاب</p>
+        </div>
+        <button id="closeAdminBtn" type="button" class="text-xs bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded transition">إغلاق اللوحة</button>
+      </div>
+
+      <form id="addQuestionForm" class="space-y-4">
+        <div>
+          <label class="block text-sm text-slate-300 mb-1">نص السؤال *</label>
+          <input id="qTitle" type="text" required placeholder="مثال: ما هي الدالة المستخدمة لطباعة المخرجات في JavaScript؟" class="w-full p-2.5 rounded bg-slate-900 border border-slate-700 text-sm focus:outline-none focus:border-indigo-500" />
+        </div>
+
+        <div>
+          <label class="block text-sm text-slate-300 mb-1">كود برمجي مصاحب للسؤال (اختياري)</label>
+          <textarea id="qCode" dir="ltr" rows="3" placeholder="let x = 5;&#10;console.log(x);" class="w-full p-2.5 rounded bg-slate-950 border border-slate-700 text-emerald-400 font-mono text-sm text-left focus:outline-none focus:border-emerald-500"></textarea>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">الخيار (A) *</label>
+            <input id="optA" type="text" required placeholder="الخيار الأول" class="w-full p-2.5 rounded bg-slate-900 border border-slate-700 text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">الخيار (B) *</label>
+            <input id="optB" type="text" required placeholder="الخيار الثاني" class="w-full p-2.5 rounded bg-slate-900 border border-slate-700 text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">الخيار (C) *</label>
+            <input id="optC" type="text" required placeholder="الخيار الثالث" class="w-full p-2.5 rounded bg-slate-900 border border-slate-700 text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">الخيار (D) *</label>
+            <input id="optD" type="text" required placeholder="الخيار الرابع" class="w-full p-2.5 rounded bg-slate-900 border border-slate-700 text-sm" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">الإجابة الصحيحة *</label>
+            <select id="correctOpt" required class="w-full p-2.5 rounded bg-slate-900 border border-slate-700 text-sm text-white">
+              <option value="A">A</option>
+              <option value="B">B</option>
+              <option value="C">C</option>
+              <option value="D">D</option>
+            </select>
+          </div>
+          <div class="md:col-span-2">
+            <label class="block text-xs text-slate-400 mb-1">الشرح والتوضيح بعد الحل (اختياري)</label>
+            <input id="qExplanation" type="text" placeholder="مثال: الدالة console.log تتيح عرض البيانات في الشاشة" class="w-full p-2.5 rounded bg-slate-900 border border-slate-700 text-sm" />
+          </div>
+        </div>
+
+        <p id="adminMsg" class="text-xs"></p>
+
+        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 py-3 rounded-lg font-bold text-sm transition">
+          + حفظ وإضافة السؤال لبنك الأسئلة
+        </button>
+      </form>
+    </section>
+
+    <!-- قسم 1: الاختبارات -->
+    <section id="quizSection" class="bg-slate-800 p-6 rounded-xl border border-slate-700">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold text-indigo-300">اختبارات مادة البرمجة</h2>
+        <div class="flex items-center gap-3">
+          <button id="toggleAdminBtn" type="button" class="text-xs bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 px-3 py-1.5 rounded-lg border border-indigo-700 transition">
+            + إضافة سؤال
+          </button>
+          <span id="scoreBadge" class="bg-indigo-950 text-indigo-300 px-3 py-1 rounded-full text-sm">النقاط: 0</span>
+        </div>
+      </div>
+      <div id="quizContent" class="text-slate-300 text-center py-6">جاري تحميل الأسئلة...</div>
+    </section>
+
+    <!-- قسم 2: معمل JavaScript -->
+    <section id="jsLabSection" class="bg-slate-800 p-6 rounded-xl border border-emerald-700/60">
+      <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
+        <div>
+          <h2 class="text-xl font-bold text-emerald-400">معمل JavaScript التفاعلي</h2>
+          <p class="text-xs text-slate-400">اكتب كود JavaScript وجرّبه فوراً من المتصفح</p>
+        </div>
+        <div class="flex gap-2">
+          <button id="runJsBtn" type="button" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-sm font-bold transition">
+            ▶ تشغيل الكود
+          </button>
+          <button id="clearJsBtn" type="button" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-2 rounded-lg text-sm transition">
+            مسح الناتج
+          </button>
+        </div>
+      </div>
+
+      <textarea id="jsEditor" dir="ltr" rows="8"
+        class="w-full p-4 rounded-lg bg-slate-950 text-emerald-300 font-mono text-sm border border-slate-700 focus:outline-none focus:border-emerald-500 mb-4 text-left">// اكتب كود JavaScript هنا واضغط "تشغيل الكود"
+let student = "بطل أولى ثانوي";
+let a = 7;
+let b = 8;
+
+console.log("أهلاً يا " + student);
+console.log("ناتج الضرب =", a * b);</textarea>
+
+      <div class="text-xs text-slate-400 mb-1.5">المخرجات (Console Output):</div>
+      <pre id="jsOutput" dir="ltr"
+        class="w-full min-h-[100px] max-h-60 overflow-y-auto p-4 rounded-lg bg-black text-slate-300 font-mono text-sm border border-slate-800 text-left">النتيجة هتظهر هنا أول ما تضغط "تشغيل الكود"...</pre>
+    </section>
   </div>
 
   <script>
@@ -20,389 +136,270 @@
     const { createClient } = window.supabase;
     const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    const appEl = document.getElementById('app');
-
     let currentUser = null;
     let studentName = '';
-    let activeTab = 'quiz'; // 'quiz' أو 'js_lab'
     let questions = [];
     let currentIndex = 0;
     let score = 0;
     let selectedOption = null;
-    let authMode = 'login';
 
-    const defaultJsCode = `// جرّب اكتب كود JavaScript هنا واضغط "تشغيل"
-let name = "أهلاً بك يا بطل";
-let x = 10;
-let y = 5;
+    // تشغيل معمل JS
+    const jsEditor = document.getElementById('jsEditor');
+    const jsOutput = document.getElementById('jsOutput');
 
-console.log(name);
-console.log("مجموع العددين =", x + y);`;
+    document.getElementById('clearJsBtn').addEventListener('click', () => {
+      jsOutput.className = 'w-full min-h-[100px] max-h-60 overflow-y-auto p-4 rounded-lg bg-black text-slate-400 font-mono text-sm border border-slate-800 text-left';
+      jsOutput.textContent = 'تم مسح المخرجات.';
+    });
+
+    document.getElementById('runJsBtn').addEventListener('click', () => {
+      const code = jsEditor.value;
+      const logs = [];
+      const customConsole = {
+        log: (...args) => logs.push(args.map(v => typeof v === 'object' ? JSON.stringify(v, null, 2) : String(v)).join(' ')),
+        warn: (...args) => logs.push('[تنبيه] ' + args.join(' ')),
+        error: (...args) => logs.push('[خطأ] ' + args.join(' '))
+      };
+
+      try {
+        const fn = new Function('console', code);
+        fn(customConsole);
+        jsOutput.className = 'w-full min-h-[100px] max-h-60 overflow-y-auto p-4 rounded-lg bg-black text-emerald-400 font-mono text-sm border border-slate-800 text-left';
+        jsOutput.textContent = logs.length ? logs.join('\n') : 'تم التنفيذ بنجاح (لا يوجد console.log).';
+      } catch (err) {
+        jsOutput.className = 'w-full min-h-[100px] max-h-60 overflow-y-auto p-4 rounded-lg bg-black text-rose-400 font-mono text-sm border border-rose-900 text-left';
+        jsOutput.textContent = 'خطأ في الكود:\n' + err.message;
+      }
+    });
+
+    // التحكم في إظهار/إخفاء لوحة الإدارة
+    const adminSection = document.getElementById('adminSection');
+    document.getElementById('toggleAdminBtn').addEventListener('click', () => {
+      adminSection.classList.toggle('hidden');
+      if (!adminSection.classList.contains('hidden')) {
+        adminSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+    document.getElementById('closeAdminBtn').addEventListener('click', () => {
+      adminSection.classList.add('hidden');
+    });
+
+    // نموذج إضافة سؤال لـ Supabase
+    document.getElementById('addQuestionForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const adminMsg = document.getElementById('adminMsg');
+      adminMsg.className = 'text-xs text-slate-400';
+      adminMsg.textContent = 'جاري حفظ السؤال...';
+
+      const title = document.getElementById('qTitle').value.trim();
+      const code_snippet = document.getElementById('qCode').value.trim() || null;
+      const option_a = document.getElementById('optA').value.trim();
+      const option_b = document.getElementById('optB').value.trim();
+      const option_c = document.getElementById('optC').value.trim();
+      const option_d = document.getElementById('optD').value.trim();
+      const correct_option = document.getElementById('correctOpt').value;
+      const explanation = document.getElementById('qExplanation').value.trim() || null;
+
+      const { data, error } = await db.from('questions').insert([{
+        title,
+        code_snippet,
+        option_a,
+        option_b,
+        option_c,
+        option_d,
+        correct_option,
+        explanation
+      }]);
+
+      if (error) {
+        adminMsg.className = 'text-xs text-rose-400';
+        adminMsg.textContent = 'تعذر إضافة السؤال: ' + error.message;
+      } else {
+        adminMsg.className = 'text-xs text-emerald-400';
+        adminMsg.textContent = 'تمت إضافة السؤال بنجاح! جاري تحديث بنك الأسئلة...';
+        document.getElementById('addQuestionForm').reset();
+        await loadQuestions();
+      }
+    });
 
     async function init() {
       const { data: { session } } = await db.auth.getSession();
       if (session?.user) {
         currentUser = session.user;
-        await loadStudentProfile();
-        renderMainLayout();
+        const { data } = await db.from('profiles').select('full_name').eq('id', currentUser.id).single();
+        studentName = data?.full_name || currentUser.user_metadata?.full_name || currentUser.email;
+        document.getElementById('userStatus').textContent = `مرحباً، ${studentName} — درجاتك تُحفظ في حسابك`;
+        document.getElementById('authArea').innerHTML = `
+          <button id="logoutBtn" class="bg-slate-700 hover:bg-rose-600 px-3 py-2 rounded-lg text-xs font-bold transition">تسجيل خروج</button>
+        `;
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+          await db.auth.signOut();
+          location.reload();
+        });
       } else {
-        renderAuthScreen();
+        document.getElementById('authArea').innerHTML = `
+          <button id="openLoginBtn" class="bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded-lg text-xs font-bold transition">تسجيل دخول / حساب جديد</button>
+        `;
+        document.getElementById('openLoginBtn').addEventListener('click', renderLoginBox);
       }
+
+      loadQuestions();
     }
 
-    async function loadStudentProfile() {
-      const { data } = await db
-        .from('profiles')
-        .select('full_name')
-        .eq('id', currentUser.id)
-        .single();
-
-      studentName = data?.full_name || currentUser.user_metadata?.full_name || currentUser.email;
-    }
-
-    function renderAuthScreen() {
-      const isLogin = authMode === 'login';
-      appEl.innerHTML = `
-        <h1 class="text-2xl font-bold text-indigo-400 mb-2 text-center">منصة البرمجة - الصف الأول الثانوي</h1>
-        <p class="text-slate-400 text-sm text-center mb-6">
-          ${isLogin ? 'سجّل دخولك بحسابك لبدء الاختبار وتجربة الأكواد' : 'أنشئ حساباً جديداً كطالب وابدأ التدريب'}
-        </p>
-
-        <form id="authForm" class="space-y-4">
-          ${!isLogin ? `
-            <div>
-              <label class="block text-sm text-slate-300 mb-1">الاسم الكامل</label>
-              <input id="fullName" type="text" required placeholder="مثال: كريم مجدي"
-                class="w-full p-3 rounded-lg bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-indigo-500" />
-            </div>
-          ` : ''}
-
-          <div>
-            <label class="block text-sm text-slate-300 mb-1">البريد الإلكتروني</label>
-            <input id="email" type="email" required placeholder="student@example.com"
-              class="w-full p-3 rounded-lg bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-indigo-500" />
-          </div>
-
-          <div>
-            <label class="block text-sm text-slate-300 mb-1">كلمة المرور</label>
-            <input id="password" type="password" required minlength="6" placeholder="6 أحرف على الأقل"
-              class="w-full p-3 rounded-lg bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-indigo-500" />
-          </div>
-
-          <div id="authError" class="text-rose-400 text-sm hidden"></div>
-
-          <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 py-3 rounded-lg font-bold transition">
-            ${isLogin ? 'تسجيل الدخول' : 'إنشاء حساب جديد'}
-          </button>
-        </form>
-
-        <div class="mt-6 text-center text-sm text-slate-400">
-          ${isLogin ? 'ليس لديك حساب؟' : 'لديك حساب بالفعل؟'}
-          <button id="toggleAuth" class="text-indigo-400 hover:underline font-semibold mr-1">
-            ${isLogin ? 'إنشاء حساب' : 'تسجيل الدخول'}
-          </button>
-        </div>
-      `;
-
-      document.getElementById('toggleAuth').addEventListener('click', () => {
-        authMode = isLogin ? 'signup' : 'login';
-        renderAuthScreen();
-      });
-
-      document.getElementById('authForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('email').value.trim();
-        const password = document.getElementById('password').value;
-        const fullName = document.getElementById('fullName')?.value.trim();
-        const errorBox = document.getElementById('authError');
-        errorBox.classList.add('hidden');
-
-        if (!isLogin) {
-          const { data, error } = await db.auth.signUp({
-            email,
-            password,
-            options: { data: { full_name: fullName } }
-          });
-          if (error) {
-            errorBox.textContent = error.message;
-            errorBox.classList.remove('hidden');
-            return;
-          }
-          if (!data.session) {
-            errorBox.className = 'text-emerald-400 text-sm';
-            errorBox.textContent = 'تم إنشاء الحساب! يمكنك الآن تسجيل الدخول.';
-            errorBox.classList.remove('hidden');
-            return;
-          }
-          currentUser = data.user;
-          await loadStudentProfile();
-          renderMainLayout();
-        } else {
-          const { data, error } = await db.auth.signInWithPassword({ email, password });
-          if (error) {
-            errorBox.textContent = 'بيانات الدخول غير صحيحة أو الحساب غير مفعّل.';
-            errorBox.classList.remove('hidden');
-            return;
-          }
-          currentUser = data.user;
-          await loadStudentProfile();
-          renderMainLayout();
-        }
-      });
-    }
-
-    function renderMainLayout() {
-      appEl.innerHTML = `
-        <div class="flex flex-wrap justify-between items-center gap-3 pb-4 mb-5 border-b border-slate-700">
-          <div>
-            <h1 class="text-lg font-bold text-indigo-400">منصة البرمجة - أولى ثانوي</h1>
-            <p class="text-xs text-slate-400">مرحباً، <span class="text-slate-200 font-semibold">${studentName}</span></p>
-          </div>
-
-          <div class="flex items-center gap-2">
-            <button id="tabQuiz" class="px-3 py-1.5 rounded-lg text-sm font-semibold transition ${
-              activeTab === 'quiz' ? 'bg-indigo-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
-            }">
-              الاختبارات
-            </button>
-            <button id="tabJs" class="px-3 py-1.5 rounded-lg text-sm font-semibold transition ${
-              activeTab === 'js_lab' ? 'bg-emerald-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
-            }">
-              معمل JavaScript
-            </button>
-            <button id="logoutBtn" class="text-xs bg-slate-700 hover:bg-rose-600 px-3 py-2 rounded-lg transition">
-              خروج
-            </button>
-          </div>
-        </div>
-
-        <div id="tabBody"></div>
-      `;
-
-      document.getElementById('tabQuiz').addEventListener('click', () => {
-        activeTab = 'quiz';
-        renderMainLayout();
-      });
-
-      document.getElementById('tabJs').addEventListener('click', () => {
-        activeTab = 'js_lab';
-        renderMainLayout();
-      });
-
-      document.getElementById('logoutBtn').addEventListener('click', async () => {
-        await db.auth.signOut();
-        currentUser = null;
-        renderAuthScreen();
-      });
-
-      if (activeTab === 'quiz') {
-        startQuiz();
-      } else {
-        renderJsLab();
-      }
-    }
-
-    function renderJsLab() {
-      const tabBody = document.getElementById('tabBody');
-      tabBody.innerHTML = `
-        <div class="mb-3 flex flex-wrap justify-between items-center gap-2">
-          <h2 class="text-lg font-bold text-emerald-400">معمل تجربة أكواد JavaScript</h2>
+    function renderLoginBox() {
+      document.getElementById('quizContent').innerHTML = `
+        <div class="max-w-md mx-auto text-right space-y-3">
+          <h3 class="font-bold text-indigo-300 text-center">الدخول بحساب الطالب</h3>
+          <input id="loginName" type="text" placeholder="الاسم الكامل (عند إنشاء حساب جديد)" class="w-full p-2.5 rounded bg-slate-900 border border-slate-700 text-sm" />
+          <input id="loginEmail" type="email" required placeholder="البريد الإلكتروني" class="w-full p-2.5 rounded bg-slate-900 border border-slate-700 text-sm" />
+          <input id="loginPass" type="password" required minlength="6" placeholder="كلمة المرور" class="w-full p-2.5 rounded bg-slate-900 border border-slate-700 text-sm" />
+          <p id="loginMsg" class="text-xs text-rose-400"></p>
           <div class="flex gap-2">
-            <button id="runJsBtn" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-1.5 rounded-lg text-sm font-bold transition">
-              ▶ تشغيل الكود
-            </button>
-            <button id="clearOutBtn" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-1.5 rounded-lg text-sm transition">
-              مسح المخرجات
-            </button>
+            <button id="doLogin" class="flex-1 bg-indigo-600 hover:bg-indigo-500 py-2 rounded font-bold text-sm">دخول</button>
+            <button id="doSignup" class="flex-1 bg-emerald-600 hover:bg-emerald-500 py-2 rounded font-bold text-sm">حساب جديد</button>
           </div>
-        </div>
-
-        <textarea id="jsEditor" dir="ltr" rows="9"
-          class="w-full p-4 rounded-lg bg-slate-950 text-emerald-300 font-mono text-sm border border-slate-700 focus:outline-none focus:border-emerald-500 mb-4 text-left">${defaultJsCode}</textarea>
-
-        <div>
-          <div class="text-xs text-slate-400 mb-1.5">المخرجات (Console Output):</div>
-          <pre id="jsOutput" dir="ltr"
-            class="w-full min-h-[110px] max-h-60 overflow-y-auto p-4 rounded-lg bg-black text-slate-200 font-mono text-sm border border-slate-800 text-left">اضغط "تشغيل الكود" لرؤية النتيجة هنا...</pre>
+          <button id="cancelLogin" class="w-full text-xs text-slate-400 hover:underline pt-1">متابعة بدون تسجيل دخول</button>
         </div>
       `;
 
-      const editorEl = document.getElementById('jsEditor');
-      const outputEl = document.getElementById('jsOutput');
+      document.getElementById('cancelLogin').addEventListener('click', loadQuestions);
 
-      document.getElementById('clearOutBtn').addEventListener('click', () => {
-        outputEl.className = 'w-full min-h-[110px] max-h-60 overflow-y-auto p-4 rounded-lg bg-black text-slate-400 font-mono text-sm border border-slate-800 text-left';
-        outputEl.textContent = 'تم مسح المخرجات.';
+      document.getElementById('doLogin').addEventListener('click', async () => {
+        const email = document.getElementById('loginEmail').value.trim();
+        const password = document.getElementById('loginPass').value;
+        const { error } = await db.auth.signInWithPassword({ email, password });
+        if (error) {
+          document.getElementById('loginMsg').textContent = error.message;
+        } else {
+          location.reload();
+        }
       });
 
-      document.getElementById('runJsBtn').addEventListener('click', () => {
-        const code = editorEl.value;
-        const logs = [];
-
-        const customConsole = {
-          log: (...args) => logs.push(args.map(a => typeof a === 'object' ? JSON.stringify(a, null, 2) : String(a)).join(' ')),
-          warn: (...args) => logs.push('[تنبيه] ' + args.join(' ')),
-          error: (...args) => logs.push('[خطأ] ' + args.join(' '))
-        };
-
-        try {
-          const runner = new Function('console', code);
-          runner(customConsole);
-          outputEl.className = 'w-full min-h-[110px] max-h-60 overflow-y-auto p-4 rounded-lg bg-black text-emerald-400 font-mono text-sm border border-slate-800 text-left';
-          outputEl.textContent = logs.length > 0 ? logs.join('\n') : 'تم تنفيذ الكود بنجاح (لا توجد مخرجات console.log).';
-        } catch (err) {
-          outputEl.className = 'w-full min-h-[110px] max-h-60 overflow-y-auto p-4 rounded-lg bg-black text-rose-400 font-mono text-sm border border-rose-900 text-left';
-          outputEl.textContent = 'خطأ في الكود:\n' + err.message;
+      document.getElementById('doSignup').addEventListener('click', async () => {
+        const full_name = document.getElementById('loginName').value.trim() || 'طالب';
+        const email = document.getElementById('loginEmail').value.trim();
+        const password = document.getElementById('loginPass').value;
+        const { data, error } = await db.auth.signUp({
+          email,
+          password,
+          options: { data: { full_name } }
+        });
+        if (error) {
+          document.getElementById('loginMsg').textContent = error.message;
+        } else if (!data.session) {
+          document.getElementById('loginMsg').className = 'text-xs text-emerald-400';
+          document.getElementById('loginMsg').textContent = 'تم إنشاء الحساب! جرّب اضغط دخول الآن.';
+        } else {
+          location.reload();
         }
       });
     }
 
-    async function startQuiz() {
+    async function loadQuestions() {
       currentIndex = 0;
       score = 0;
-      selectedOption = null;
-
-      const tabBody = document.getElementById('tabBody');
-      tabBody.innerHTML = `<div class="text-center text-slate-300 py-8">جاري تحميل الأسئلة...</div>`;
+      document.getElementById('scoreBadge').textContent = 'النقاط: 0';
+      document.getElementById('quizContent').innerHTML = '<div class="text-slate-400 py-6">جاري تحميل الأسئلة...</div>';
 
       const { data, error } = await db.from('questions').select('*').order('id', { ascending: true });
-
       if (error) {
-        tabBody.innerHTML = `<p class="text-rose-400 text-center">خطأ في تحميل الأسئلة: ${error.message}</p>`;
+        document.getElementById('quizContent').innerHTML = `<p class="text-rose-400">خطأ: ${error.message}</p>`;
         return;
       }
-
       questions = data || [];
-      if (questions.length === 0) {
-        tabBody.innerHTML = `<p class="text-center">لا توجد أسئلة مضافة حالياً.</p>`;
+      if (!questions.length) {
+        document.getElementById('quizContent').innerHTML = '<p class="text-slate-400">لا توجد أسئلة حالياً. اضغط على "+ إضافة سؤال" بالأعلى لإضافة أول سؤال!</p>';
         return;
       }
-
       renderQuestion();
     }
 
     function renderQuestion() {
-      const tabBody = document.getElementById('tabBody');
       if (currentIndex >= questions.length) {
         finishQuiz();
         return;
       }
-
       const q = questions[currentIndex];
       selectedOption = null;
 
-      let codeBlock = q.code_snippet
-        ? `<pre dir="ltr" class="bg-slate-950 p-3 rounded text-emerald-400 font-mono mb-4 text-left overflow-x-auto border border-slate-800">${q.code_snippet}</pre>`
-        : '';
-
-      let optionsHtml = ['a', 'b', 'c', 'd'].map(letter => {
-        const upper = letter.toUpperCase();
-        return `
-          <button data-opt="${upper}" class="opt-btn w-full p-3 text-right bg-slate-700 hover:bg-slate-600 rounded-lg border border-slate-600 transition flex items-center gap-3">
-            <span class="font-bold bg-slate-900 px-2.5 py-0.5 rounded text-sm">${upper}</span>
-            <span>${q[`option_${letter}`]}</span>
+      let html = `
+        <div class="text-right">
+          <div class="text-xs text-slate-400 mb-2">السؤال ${currentIndex + 1} من ${questions.length}</div>
+          <h3 class="text-lg font-semibold mb-3">${q.title}</h3>
+          ${q.code_snippet ? `<pre dir="ltr" class="bg-slate-950 p-3 rounded text-emerald-400 font-mono mb-4 text-left overflow-x-auto border border-slate-800">${q.code_snippet}</pre>` : ''}
+          <div class="space-y-2.5 mb-4">
+            ${['a', 'b', 'c', 'd'].map(l => {
+              const u = l.toUpperCase();
+              return `<button data-opt="${u}" class="opt-btn w-full p-3 text-right bg-slate-700 hover:bg-slate-600 rounded-lg border border-slate-600 transition flex items-center gap-3">
+                <span class="font-bold bg-slate-900 px-2.5 py-0.5 rounded text-xs">${u}</span>
+                <span>${q['option_' + l]}</span>
+              </button>`;
+            }).join('')}
+          </div>
+          <div id="qFeedback" class="hidden p-3 rounded-lg bg-slate-900 border border-slate-700 mb-3 text-sm"></div>
+          <button id="qNext" class="hidden w-full bg-indigo-600 hover:bg-indigo-500 py-2.5 rounded-lg font-bold text-sm">
+            ${currentIndex + 1 === questions.length ? 'إنهاء الاختبار' : 'السؤال التالي ←'}
           </button>
-        `;
-      }).join('');
-
-      tabBody.innerHTML = `
-        <div class="flex justify-between items-center text-slate-400 text-sm mb-3">
-          <span>السؤال ${currentIndex + 1} من ${questions.length}</span>
-          <span class="bg-indigo-900 text-indigo-200 px-3 py-1 rounded-full text-xs">النقاط: ${score}</span>
         </div>
-        <h2 class="text-xl font-semibold mb-4 text-right">${q.title}</h2>
-        ${codeBlock}
-        <div class="space-y-3 mb-4">${optionsHtml}</div>
-        <div id="feedback" class="hidden p-4 rounded-lg bg-slate-900 border border-slate-700 mb-4"></div>
-        <button id="nextBtn" class="hidden w-full bg-indigo-600 hover:bg-indigo-500 py-3 rounded-lg font-bold transition">
-          ${currentIndex + 1 === questions.length ? 'إنهاء وحفظ النتيجة' : 'السؤال التالي ←'}
-        </button>
       `;
+
+      document.getElementById('quizContent').innerHTML = html;
 
       document.querySelectorAll('.opt-btn').forEach(btn => {
         btn.addEventListener('click', () => {
           if (selectedOption) return;
           selectedOption = btn.getAttribute('data-opt');
-          const isCorrect = selectedOption === q.correct_option;
-          if (isCorrect) score++;
+          const ok = selectedOption === q.correct_option;
+          if (ok) {
+            score++;
+            document.getElementById('scoreBadge').textContent = `النقاط: ${score}`;
+          }
 
           document.querySelectorAll('.opt-btn').forEach(b => {
-            const opt = b.getAttribute('data-opt');
             b.disabled = true;
-            if (opt === q.correct_option) {
-              b.className = b.className.replace('bg-slate-700 hover:bg-slate-600', 'bg-emerald-600');
-            } else if (opt === selectedOption) {
-              b.className = b.className.replace('bg-slate-700 hover:bg-slate-600', 'bg-rose-600');
-            } else {
-              b.className += ' opacity-50';
-            }
+            const opt = b.getAttribute('data-opt');
+            if (opt === q.correct_option) b.className = b.className.replace('bg-slate-700 hover:bg-slate-600', 'bg-emerald-600');
+            else if (opt === selectedOption) b.className = b.className.replace('bg-slate-700 hover:bg-slate-600', 'bg-rose-600');
+            else b.className += ' opacity-50';
           });
 
-          const feedback = document.getElementById('feedback');
-          feedback.innerHTML = `
-            <p class="font-bold ${isCorrect ? 'text-emerald-400' : 'text-rose-400'} mb-1">
-              ${isCorrect ? 'إجابة صحيحة!' : `إجابة خاطئة — الإجابة الصحيحة هي (${q.correct_option})`}
-            </p>
-            ${q.explanation ? `<p class="text-slate-300 text-sm">${q.explanation}</p>` : ''}
-          `;
-          feedback.classList.remove('hidden');
-          document.getElementById('nextBtn').classList.remove('hidden');
+          const fb = document.getElementById('qFeedback');
+          fb.innerHTML = `<p class="font-bold ${ok ? 'text-emerald-400' : 'text-rose-400'}">${ok ? 'إجابة صحيحة!' : 'إجابة خاطئة — الصح: ' + q.correct_option}</p>${q.explanation ? `<p class="text-slate-300 mt-1">${q.explanation}</p>` : ''}`;
+          fb.classList.remove('hidden');
+          document.getElementById('qNext').classList.remove('hidden');
         });
       });
 
-      document.getElementById('nextBtn').addEventListener('click', () => {
+      document.getElementById('qNext').addEventListener('click', () => {
         currentIndex++;
         renderQuestion();
       });
     }
 
     async function finishQuiz() {
-      const tabBody = document.getElementById('tabBody');
-      tabBody.innerHTML = `<div class="text-center text-slate-300 py-8">جاري حفظ نتيجتك...</div>`;
+      let savedNote = '';
+      if (currentUser) {
+        const { error } = await db.from('quiz_results').insert({
+          student_id: currentUser.id,
+          score,
+          total_questions: questions.length
+        });
+        savedNote = error
+          ? `<p class="text-xs text-rose-400 mb-3">تعذر حفظ النتيجة: ${error.message}</p>`
+          : `<p class="text-xs text-emerald-400 mb-3">تم حفظ نتيجتك في حسابك!</p>`;
+      } else {
+        savedNote = `<p class="text-xs text-slate-400 mb-3">سجّل دخولك عشان تتحفظ نتيجتك في حسابك.</p>`;
+      }
 
-      const { error: insertError } = await db.from('quiz_results').insert({
-        student_id: currentUser.id,
-        score: score,
-        total_questions: questions.length
-      });
-
-      const { data: history } = await db
-        .from('quiz_results')
-        .select('score, total_questions, created_at')
-        .eq('student_id', currentUser.id)
-        .order('created_at', { ascending: false })
-        .limit(5);
-
-      const historyRows = (history || []).map(row => {
-        const dateStr = new Date(row.created_at).toLocaleDateString('ar-EG');
-        return `
-          <div class="flex justify-between items-center bg-slate-900/70 px-4 py-2.5 rounded-lg border border-slate-700/70 text-sm">
-            <span class="text-slate-400">${dateStr}</span>
-            <span class="font-bold text-indigo-300">${row.score} / ${row.total_questions}</span>
-          </div>
-        `;
-      }).join('');
-
-      tabBody.innerHTML = `
-        <div class="text-center">
-          <h2 class="text-3xl font-bold mb-2 text-emerald-400">أحسنت يا ${studentName}!</h2>
-          <p class="text-xl mb-2">درجتك في هذا الاختبار: <span class="font-bold text-indigo-300">${score} من ${questions.length}</span></p>
-          ${insertError
-            ? `<p class="text-xs text-rose-400 mb-4">تنبيه: لم يتم حفظ النتيجة (${insertError.message})</p>`
-            : `<p class="text-xs text-emerald-400 mb-6">تم حفظ نتيجتك في حسابك بنجاح</p>`}
+      document.getElementById('quizContent').innerHTML = `
+        <div class="text-center py-4">
+          <h3 class="text-2xl font-bold text-emerald-400 mb-2">خلصت الاختبار!</h3>
+          <p class="text-lg mb-2">درجتك: <span class="font-bold text-indigo-300">${score} من ${questions.length}</span></p>
+          ${savedNote}
+          <button id="restartQuizBtn" class="bg-indigo-600 hover:bg-indigo-500 px-6 py-2.5 rounded-lg font-bold text-sm">إعادة الاختبار</button>
         </div>
-
-        <div class="mb-6">
-          <h3 class="text-sm font-bold text-slate-300 mb-3">آخر نتائجك المحفوظة:</h3>
-          <div class="space-y-2">${historyRows || '<p class="text-slate-400 text-sm">لا توجد نتائج سابقة.</p>'}</div>
-        </div>
-
-        <button id="retryBtn" class="w-full bg-indigo-600 hover:bg-indigo-500 py-3 rounded-lg font-bold transition">
-          إعادة الاختبار
-        </button>
       `;
-
-      document.getElementById('retryBtn').addEventListener('click', startQuiz);
+      document.getElementById('restartQuizBtn').addEventListener('click', loadQuestions);
     }
 
     init();
