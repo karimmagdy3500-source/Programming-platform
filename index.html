@@ -6,12 +6,42 @@
   <title>منصة البرمجة - الصف الأول الثانوي</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    /* كلاسات التأثيرات الحركية المخصصة */
+    .animate-fade-in {
+      animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .animate-shake {
+      animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+    .animate-pop {
+      animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes shake {
+      10%, 90% { transform: translate3d(-1px, 0, 0); }
+      20%, 80% { transform: translate3d(2px, 0, 0); }
+      30%, 50%, 70% { transform: translate3d(-3px, 0, 0); }
+      40%, 60% { transform: translate3d(3px, 0, 0); }
+    }
+
+    @keyframes pop {
+      0% { transform: scale(0.96); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+  </style>
 </head>
-<body class="bg-slate-900 text-white min-h-screen p-6">
+<body class="bg-slate-900 text-white min-h-screen p-6 font-sans">
 
   <div class="max-w-4xl mx-auto space-y-8">
     <!-- رأس الصفحة وحالة الحساب -->
-    <header class="bg-slate-800 p-5 rounded-xl border border-slate-700 flex flex-wrap justify-between items-center gap-4">
+    <header class="bg-slate-800 p-5 rounded-xl border border-slate-700 flex flex-wrap justify-between items-center gap-4 shadow-lg transition-all duration-300">
       <div>
         <h1 class="text-2xl font-bold text-indigo-400">منصة البرمجة - الصف الأول الثانوي</h1>
         <p id="userStatus" class="text-xs text-slate-400 mt-1">وضع التجربة المباشرة (يمكنك تسجيل الدخول لحفظ درجاتك)</p>
@@ -20,49 +50,49 @@
     </header>
 
     <!-- لوحة المعلم / إضافة أسئلة جديدة (تظهر للأدمن فقط) -->
-    <section id="adminSection" class="bg-slate-800 p-6 rounded-xl border border-indigo-500/50 hidden">
+    <section id="adminSection" class="bg-slate-800 p-6 rounded-xl border border-indigo-500/50 shadow-xl hidden transition-all duration-300 transform origin-top">
       <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-3">
         <div>
           <h2 class="text-xl font-bold text-indigo-300">لوحة إضافة سؤال جديد (Admin)</h2>
           <p class="text-xs text-slate-400">أضف الأسئلة مباشرة لجدول Supabase ليراها كافة الطلاب</p>
         </div>
-        <button id="closeAdminBtn" type="button" class="text-xs bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded transition">إغلاق اللوحة</button>
+        <button id="closeAdminBtn" type="button" class="text-xs bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded transition-all duration-200 active:scale-95">إغلاق اللوحة</button>
       </div>
 
       <form id="addQuestionForm" class="space-y-4">
         <div>
           <label class="block text-sm text-slate-300 mb-1">نص السؤال *</label>
-          <input id="qTitle" type="text" required placeholder="مثال: ما هي الدالة المستخدمة لطباعة المخرجات في JavaScript؟" class="w-full p-2.5 rounded bg-slate-900 border border-slate-700 text-sm focus:outline-none focus:border-indigo-500" />
+          <input id="qTitle" type="text" required placeholder="مثال: ما هي الدالة المستخدمة لطباعة المخرجات في JavaScript؟" class="w-full p-2.5 rounded bg-slate-900 border border-slate-700 text-sm focus:outline-none focus:border-indigo-500 transition-colors duration-200" />
         </div>
 
         <div>
           <label class="block text-sm text-slate-300 mb-1">كود برمجي مصاحب للسؤال (اختياري)</label>
-          <textarea id="qCode" dir="ltr" rows="3" placeholder="let x = 5;&#10;console.log(x);" class="w-full p-2.5 rounded bg-slate-950 border border-slate-700 text-emerald-400 font-mono text-sm text-left focus:outline-none focus:border-emerald-500"></textarea>
+          <textarea id="qCode" dir="ltr" rows="3" placeholder="let x = 5;&#10;console.log(x);" class="w-full p-2.5 rounded bg-slate-950 border border-slate-700 text-emerald-400 font-mono text-sm text-left focus:outline-none focus:border-emerald-500 transition-colors duration-200"></textarea>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div>
             <label class="block text-xs text-slate-400 mb-1">الخيار (A) *</label>
-            <input id="optA" type="text" required placeholder="الخيار الأول" class="w-full p-2.5 rounded bg-slate-900 border border-slate-700 text-sm" />
+            <input id="optA" type="text" required placeholder="الخيار الأول" class="w-full p-2.5 rounded bg-slate-900 border border-slate-700 text-sm transition-colors duration-200" />
           </div>
           <div>
             <label class="block text-xs text-slate-400 mb-1">الخيار (B) *</label>
-            <input id="optB" type="text" required placeholder="الخيار الثاني" class="w-full p-2.5 rounded bg-slate-900 border border-slate-700 text-sm" />
+            <input id="optB" type="text" required placeholder="الخيار الثاني" class="w-full p-2.5 rounded bg-slate-900 border border-slate-700 text-sm transition-colors duration-200" />
           </div>
           <div>
             <label class="block text-xs text-slate-400 mb-1">الخيار (C) *</label>
-            <input id="optC" type="text" required placeholder="الخيار الثالث" class="w-full p-2.5 rounded bg-slate-900 border border-slate-700 text-sm" />
+            <input id="optC" type="text" required placeholder="الخيار الثالث" class="w-full p-2.5 rounded bg-slate-900 border border-slate-700 text-sm transition-colors duration-200" />
           </div>
           <div>
             <label class="block text-xs text-slate-400 mb-1">الخيار (D) *</label>
-            <input id="optD" type="text" required placeholder="الخيار الرابع" class="w-full p-2.5 rounded bg-slate-900 border border-slate-700 text-sm" />
+            <input id="optD" type="text" required placeholder="الخيار الرابع" class="w-full p-2.5 rounded bg-slate-900 border border-slate-700 text-sm transition-colors duration-200" />
           </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
           <div>
             <label class="block text-xs text-slate-400 mb-1">الإجابة الصحيحة *</label>
-            <select id="correctOpt" required class="w-full p-2.5 rounded bg-slate-900 border border-slate-700 text-sm text-white">
+            <select id="correctOpt" required class="w-full p-2.5 rounded bg-slate-900 border border-slate-700 text-sm text-white transition-colors duration-200">
               <option value="A">A</option>
               <option value="B">B</option>
               <option value="C">C</option>
@@ -71,51 +101,51 @@
           </div>
           <div class="md:col-span-2">
             <label class="block text-xs text-slate-400 mb-1">الشرح والتوضيح بعد الحل (اختياري)</label>
-            <input id="qExplanation" type="text" placeholder="مثال: الدالة console.log تتيح عرض البيانات في الشاشة" class="w-full p-2.5 rounded bg-slate-900 border border-slate-700 text-sm" />
+            <input id="qExplanation" type="text" placeholder="مثال: الدالة console.log تتيح عرض البيانات في الشاشة" class="w-full p-2.5 rounded bg-slate-900 border border-slate-700 text-sm transition-colors duration-200" />
           </div>
         </div>
 
         <p id="adminMsg" class="text-xs"></p>
 
-        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 py-3 rounded-lg font-bold text-sm transition">
+        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 py-3 rounded-lg font-bold text-sm transition-all duration-200 active:scale-[0.99] shadow-md">
           + حفظ وإضافة السؤال لبنك الأسئلة
         </button>
       </form>
     </section>
 
     <!-- قسم 1: الاختبارات -->
-    <section id="quizSection" class="bg-slate-800 p-6 rounded-xl border border-slate-700">
+    <section id="quizSection" class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-xl transition-all duration-300">
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-bold text-indigo-300">اختبارات مادة البرمجة</h2>
         <div class="flex items-center gap-3">
-          <button id="toggleAdminBtn" type="button" class="hidden text-xs bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 px-3 py-1.5 rounded-lg border border-indigo-700 transition">
+          <button id="toggleAdminBtn" type="button" class="hidden text-xs bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 px-3 py-1.5 rounded-lg border border-indigo-700 transition-all duration-200 active:scale-95 hover:shadow-md">
             + إضافة سؤال
           </button>
-          <span id="scoreBadge" class="bg-indigo-950 text-indigo-300 px-3 py-1 rounded-full text-sm">النقاط: 0</span>
+          <span id="scoreBadge" class="bg-indigo-950 text-indigo-300 px-3 py-1 rounded-full text-sm font-semibold transition-all duration-300">النقاط: 0</span>
         </div>
       </div>
       <div id="quizContent" class="text-slate-300 text-center py-6">جاري تحميل الأسئلة...</div>
     </section>
 
     <!-- قسم 2: معمل JavaScript -->
-    <section id="jsLabSection" class="bg-slate-800 p-6 rounded-xl border border-emerald-700/60">
+    <section id="jsLabSection" class="bg-slate-800 p-6 rounded-xl border border-emerald-700/60 shadow-xl transition-all duration-300">
       <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
         <div>
           <h2 class="text-xl font-bold text-emerald-400">معمل JavaScript التفاعلي</h2>
           <p class="text-xs text-slate-400">اكتب كود JavaScript وجرّبه فوراً من المتصفح</p>
         </div>
         <div class="flex gap-2">
-          <button id="runJsBtn" type="button" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-sm font-bold transition">
+          <button id="runJsBtn" type="button" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 active:scale-95 shadow-md hover:shadow-emerald-900/50">
             ▶ تشغيل الكود
           </button>
-          <button id="clearJsBtn" type="button" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-2 rounded-lg text-sm transition">
+          <button id="clearJsBtn" type="button" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-2 rounded-lg text-sm transition-all duration-200 active:scale-95">
             مسح الناتج
           </button>
         </div>
       </div>
 
       <textarea id="jsEditor" dir="ltr" rows="8"
-        class="w-full p-4 rounded-lg bg-slate-950 text-emerald-300 font-mono text-sm border border-slate-700 focus:outline-none focus:border-emerald-500 mb-4 text-left">// اكتب كود JavaScript هنا واضغط "تشغيل الكود"
+        class="w-full p-4 rounded-lg bg-slate-950 text-emerald-300 font-mono text-sm border border-slate-700 focus:outline-none focus:border-emerald-500 mb-4 text-left transition-colors duration-200">// اكتب كود JavaScript هنا واضغط "تشغيل الكود"
 let student = "بطل أولى ثانوي";
 let a = 7;
 let b = 8;
@@ -125,7 +155,7 @@ console.log("ناتج الضرب =", a * b);</textarea>
 
       <div class="text-xs text-slate-400 mb-1.5">المخرجات (Console Output):</div>
       <pre id="jsOutput" dir="ltr"
-        class="w-full min-h-[100px] max-h-60 overflow-y-auto p-4 rounded-lg bg-black text-slate-300 font-mono text-sm border border-slate-800 text-left">النتيجة هتظهر هنا أول ما تضغط "تشغيل الكود"...</pre>
+        class="w-full min-h-[100px] max-h-60 overflow-y-auto p-4 rounded-lg bg-black text-slate-300 font-mono text-sm border border-slate-800 text-left transition-all duration-300">النتيجة هتظهر هنا أول ما تضغط "تشغيل الكود"...</pre>
     </section>
   </div>
 
@@ -149,7 +179,7 @@ console.log("ناتج الضرب =", a * b);</textarea>
     const jsOutput = document.getElementById('jsOutput');
 
     document.getElementById('clearJsBtn').addEventListener('click', () => {
-      jsOutput.className = 'w-full min-h-[100px] max-h-60 overflow-y-auto p-4 rounded-lg bg-black text-slate-400 font-mono text-sm border border-slate-800 text-left';
+      jsOutput.className = 'w-full min-h-[100px] max-h-60 overflow-y-auto p-4 rounded-lg bg-black text-slate-400 font-mono text-sm border border-slate-800 text-left transition-all duration-300 animate-pop';
       jsOutput.textContent = 'تم مسح المخرجات.';
     });
 
@@ -165,23 +195,26 @@ console.log("ناتج الضرب =", a * b);</textarea>
       try {
         const fn = new Function('console', code);
         fn(customConsole);
-        jsOutput.className = 'w-full min-h-[100px] max-h-60 overflow-y-auto p-4 rounded-lg bg-black text-emerald-400 font-mono text-sm border border-slate-800 text-left';
+        jsOutput.className = 'w-full min-h-[100px] max-h-60 overflow-y-auto p-4 rounded-lg bg-black text-emerald-400 font-mono text-sm border border-slate-800 text-left transition-all duration-300 animate-pop';
         jsOutput.textContent = logs.length ? logs.join('\n') : 'تم التنفيذ بنجاح (لا يوجد console.log).';
       } catch (err) {
-        jsOutput.className = 'w-full min-h-[100px] max-h-60 overflow-y-auto p-4 rounded-lg bg-black text-rose-400 font-mono text-sm border border-rose-900 text-left';
+        jsOutput.className = 'w-full min-h-[100px] max-h-60 overflow-y-auto p-4 rounded-lg bg-black text-rose-400 font-mono text-sm border border-rose-900 text-left transition-all duration-300 animate-shake';
         jsOutput.textContent = 'خطأ في الكود:\n' + err.message;
       }
     });
 
-    // التحكم في إظهار/إخفاء لوحة الإدارة (للأدمن فقط)
+    // التحكم في إظهار/إخفاء لوحة الإدارة
     const adminSection = document.getElementById('adminSection');
     const toggleAdminBtn = document.getElementById('toggleAdminBtn');
 
     toggleAdminBtn.addEventListener('click', () => {
       if (!isAdmin) return;
-      adminSection.classList.toggle('hidden');
-      if (!adminSection.classList.contains('hidden')) {
+      if (adminSection.classList.contains('hidden')) {
+        adminSection.classList.remove('hidden');
+        adminSection.classList.add('animate-fade-in');
         adminSection.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        adminSection.classList.add('hidden');
       }
     });
 
@@ -219,10 +252,10 @@ console.log("ناتج الضرب =", a * b);</textarea>
       }]);
 
       if (error) {
-        adminMsg.className = 'text-xs text-rose-400';
+        adminMsg.className = 'text-xs text-rose-400 animate-shake';
         adminMsg.textContent = 'تعذر إضافة السؤال: ' + error.message;
       } else {
-        adminMsg.className = 'text-xs text-emerald-400';
+        adminMsg.className = 'text-xs text-emerald-400 animate-pop';
         adminMsg.textContent = 'تمت إضافة السؤال بنجاح! جاري تحديث بنك الأسئلة...';
         document.getElementById('addQuestionForm').reset();
         await loadQuestions();
@@ -252,7 +285,7 @@ console.log("ناتج الضرب =", a * b);</textarea>
         }
 
         document.getElementById('authArea').innerHTML = `
-          <button id="logoutBtn" class="bg-slate-700 hover:bg-rose-600 px-3 py-2 rounded-lg text-xs font-bold transition">تسجيل خروج</button>
+          <button id="logoutBtn" class="bg-slate-700 hover:bg-rose-600 px-3 py-2 rounded-lg text-xs font-bold transition-all duration-200 active:scale-95 shadow">تسجيل خروج</button>
         `;
         document.getElementById('logoutBtn').addEventListener('click', async () => {
           await db.auth.signOut();
@@ -263,7 +296,7 @@ console.log("ناتج الضرب =", a * b);</textarea>
         toggleAdminBtn.classList.add('hidden');
         adminSection.classList.add('hidden');
         document.getElementById('authArea').innerHTML = `
-          <button id="openLoginBtn" class="bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded-lg text-xs font-bold transition">تسجيل دخول / حساب جديد</button>
+          <button id="openLoginBtn" class="bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded-lg text-xs font-bold transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 shadow-md">تسجيل دخول / حساب جديد</button>
         `;
         document.getElementById('openLoginBtn').addEventListener('click', renderLoginBox);
       }
@@ -273,15 +306,15 @@ console.log("ناتج الضرب =", a * b);</textarea>
 
     function renderLoginBox() {
       document.getElementById('quizContent').innerHTML = `
-        <div class="max-w-md mx-auto text-right space-y-3">
+        <div class="max-w-md mx-auto text-right space-y-3 animate-fade-in">
           <h3 class="font-bold text-indigo-300 text-center">الدخول بحساب الطالب</h3>
-          <input id="loginName" type="text" placeholder="الاسم الكامل (عند إنشاء حساب جديد)" class="w-full p-2.5 rounded bg-slate-900 border border-slate-700 text-sm" />
-          <input id="loginEmail" type="email" required placeholder="البريد الإلكتروني" class="w-full p-2.5 rounded bg-slate-900 border border-slate-700 text-sm" />
-          <input id="loginPass" type="password" required minlength="6" placeholder="كلمة المرور" class="w-full p-2.5 rounded bg-slate-900 border border-slate-700 text-sm" />
+          <input id="loginName" type="text" placeholder="الاسم الكامل (عند إنشاء حساب جديد)" class="w-full p-2.5 rounded bg-slate-900 border border-slate-700 text-sm focus:outline-none focus:border-indigo-500 transition-colors" />
+          <input id="loginEmail" type="email" required placeholder="البريد الإلكتروني" class="w-full p-2.5 rounded bg-slate-900 border border-slate-700 text-sm focus:outline-none focus:border-indigo-500 transition-colors" />
+          <input id="loginPass" type="password" required minlength="6" placeholder="كلمة المرور" class="w-full p-2.5 rounded bg-slate-900 border border-slate-700 text-sm focus:outline-none focus:border-indigo-500 transition-colors" />
           <p id="loginMsg" class="text-xs text-rose-400"></p>
           <div class="flex gap-2">
-            <button id="doLogin" class="flex-1 bg-indigo-600 hover:bg-indigo-500 py-2 rounded font-bold text-sm">دخول</button>
-            <button id="doSignup" class="flex-1 bg-emerald-600 hover:bg-emerald-500 py-2 rounded font-bold text-sm">حساب جديد</button>
+            <button id="doLogin" class="flex-1 bg-indigo-600 hover:bg-indigo-500 py-2 rounded font-bold text-sm transition-all active:scale-95">دخول</button>
+            <button id="doSignup" class="flex-1 bg-emerald-600 hover:bg-emerald-500 py-2 rounded font-bold text-sm transition-all active:scale-95">حساب جديد</button>
           </div>
           <button id="cancelLogin" class="w-full text-xs text-slate-400 hover:underline pt-1">متابعة بدون تسجيل دخول</button>
         </div>
@@ -294,6 +327,7 @@ console.log("ناتج الضرب =", a * b);</textarea>
         const password = document.getElementById('loginPass').value;
         const { error } = await db.auth.signInWithPassword({ email, password });
         if (error) {
+          document.getElementById('loginMsg').className = 'text-xs text-rose-400 animate-shake';
           document.getElementById('loginMsg').textContent = error.message;
         } else {
           location.reload();
@@ -310,9 +344,10 @@ console.log("ناتج الضرب =", a * b);</textarea>
           options: { data: { full_name } }
         });
         if (error) {
+          document.getElementById('loginMsg').className = 'text-xs text-rose-400 animate-shake';
           document.getElementById('loginMsg').textContent = error.message;
         } else if (!data.session) {
-          document.getElementById('loginMsg').className = 'text-xs text-emerald-400';
+          document.getElementById('loginMsg').className = 'text-xs text-emerald-400 animate-pop';
           document.getElementById('loginMsg').textContent = 'تم إنشاء الحساب! جرّب اضغط دخول الآن.';
         } else {
           location.reload();
@@ -328,7 +363,7 @@ console.log("ناتج الضرب =", a * b);</textarea>
 
       const { data, error } = await db.from('questions').select('*').order('id', { ascending: true });
       if (error) {
-        document.getElementById('quizContent').innerHTML = `<p class="text-rose-400">خطأ: ${error.message}</p>`;
+        document.getElementById('quizContent').innerHTML = `<p class="text-rose-400 animate-shake">خطأ: ${error.message}</p>`;
         return;
       }
       questions = data || [];
@@ -348,21 +383,21 @@ console.log("ناتج الضرب =", a * b);</textarea>
       selectedOption = null;
 
       let html = `
-        <div class="text-right">
+        <div class="text-right animate-fade-in">
           <div class="text-xs text-slate-400 mb-2">السؤال ${currentIndex + 1} من ${questions.length}</div>
           <h3 class="text-lg font-semibold mb-3">${q.title}</h3>
-          ${q.code_snippet ? `<pre dir="ltr" class="bg-slate-950 p-3 rounded text-emerald-400 font-mono mb-4 text-left overflow-x-auto border border-slate-800">${q.code_snippet}</pre>` : ''}
+          ${q.code_snippet ? `<pre dir="ltr" class="bg-slate-950 p-3 rounded text-emerald-400 font-mono mb-4 text-left overflow-x-auto border border-slate-800 shadow-inner">${q.code_snippet}</pre>` : ''}
           <div class="space-y-2.5 mb-4">
             ${['a', 'b', 'c', 'd'].map(l => {
               const u = l.toUpperCase();
-              return `<button data-opt="${u}" class="opt-btn w-full p-3 text-right bg-slate-700 hover:bg-slate-600 rounded-lg border border-slate-600 transition flex items-center gap-3">
-                <span class="font-bold bg-slate-900 px-2.5 py-0.5 rounded text-xs">${u}</span>
+              return `<button data-opt="${u}" class="opt-btn w-full p-3 text-right bg-slate-700 hover:bg-slate-650 hover:bg-slate-600 rounded-lg border border-slate-600 transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-3 group">
+                <span class="font-bold bg-slate-900 px-2.5 py-0.5 rounded text-xs group-hover:bg-indigo-900 group-hover:text-indigo-200 transition-colors">${u}</span>
                 <span>${q['option_' + l]}</span>
               </button>`;
             }).join('')}
           </div>
           <div id="qFeedback" class="hidden p-3 rounded-lg bg-slate-900 border border-slate-700 mb-3 text-sm"></div>
-          <button id="qNext" class="hidden w-full bg-indigo-600 hover:bg-indigo-500 py-2.5 rounded-lg font-bold text-sm">
+          <button id="qNext" class="hidden w-full bg-indigo-600 hover:bg-indigo-500 py-2.5 rounded-lg font-bold text-sm transition-all duration-200 active:scale-95 shadow-lg">
             ${currentIndex + 1 === questions.length ? 'إنهاء الاختبار' : 'السؤال التالي ←'}
           </button>
         </div>
@@ -377,21 +412,33 @@ console.log("ناتج الضرب =", a * b);</textarea>
           const ok = selectedOption === q.correct_option;
           if (ok) {
             score++;
-            document.getElementById('scoreBadge').textContent = `النقاط: ${score}`;
+            const scoreBadge = document.getElementById('scoreBadge');
+            scoreBadge.textContent = `النقاط: ${score}`;
+            scoreBadge.classList.add('animate-pop');
+            setTimeout(() => scoreBadge.classList.remove('animate-pop'), 300);
           }
 
           document.querySelectorAll('.opt-btn').forEach(b => {
             b.disabled = true;
+            b.classList.remove('hover:-translate-y-0.5');
             const opt = b.getAttribute('data-opt');
-            if (opt === q.correct_option) b.className = b.className.replace('bg-slate-700 hover:bg-slate-600', 'bg-emerald-600');
-            else if (opt === selectedOption) b.className = b.className.replace('bg-slate-700 hover:bg-slate-600', 'bg-rose-600');
-            else b.className += ' opacity-50';
+            if (opt === q.correct_option) {
+              b.className = b.className.replace('bg-slate-700 hover:bg-slate-650 hover:bg-slate-600', 'bg-emerald-600 border-emerald-500 animate-pop');
+            } else if (opt === selectedOption) {
+              b.className = b.className.replace('bg-slate-700 hover:bg-slate-650 hover:bg-slate-600', 'bg-rose-600 border-rose-500 animate-shake');
+            } else {
+              b.className += ' opacity-50';
+            }
           });
 
           const fb = document.getElementById('qFeedback');
           fb.innerHTML = `<p class="font-bold ${ok ? 'text-emerald-400' : 'text-rose-400'}">${ok ? 'إجابة صحيحة!' : 'إجابة خاطئة — الصح: ' + q.correct_option}</p>${q.explanation ? `<p class="text-slate-300 mt-1">${q.explanation}</p>` : ''}`;
+          fb.className = `p-3 rounded-lg bg-slate-900 border border-slate-700 mb-3 text-sm animate-fade-in`;
           fb.classList.remove('hidden');
-          document.getElementById('qNext').classList.remove('hidden');
+          
+          const qNext = document.getElementById('qNext');
+          qNext.classList.remove('hidden');
+          qNext.classList.add('animate-pop');
         });
       });
 
@@ -410,18 +457,18 @@ console.log("ناتج الضرب =", a * b);</textarea>
           total_questions: questions.length
         });
         savedNote = error
-          ? `<p class="text-xs text-rose-400 mb-3">تعذر حفظ النتيجة: ${error.message}</p>`
-          : `<p class="text-xs text-emerald-400 mb-3">تم حفظ نتيجتك في حسابك!</p>`;
+          ? `<p class="text-xs text-rose-400 mb-3 animate-shake">تعذر حفظ النتيجة: ${error.message}</p>`
+          : `<p class="text-xs text-emerald-400 mb-3 animate-pop">تم حفظ نتيجتك في حسابك!</p>`;
       } else {
         savedNote = `<p class="text-xs text-slate-400 mb-3">سجّل دخولك عشان تتحفظ نتيجتك في حسابك.</p>`;
       }
 
       document.getElementById('quizContent').innerHTML = `
-        <div class="text-center py-4">
-          <h3 class="text-2xl font-bold text-emerald-400 mb-2">خلصت الاختبار!</h3>
+        <div class="text-center py-4 animate-fade-in">
+          <h3 class="text-2xl font-bold text-emerald-400 mb-2 animate-pop">خلصت الاختبار!</h3>
           <p class="text-lg mb-2">درجتك: <span class="font-bold text-indigo-300">${score} من ${questions.length}</span></p>
           ${savedNote}
-          <button id="restartQuizBtn" class="bg-indigo-600 hover:bg-indigo-500 px-6 py-2.5 rounded-lg font-bold text-sm">إعادة الاختبار</button>
+          <button id="restartQuizBtn" class="bg-indigo-600 hover:bg-indigo-500 px-6 py-2.5 rounded-lg font-bold text-sm transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 shadow-lg">إعادة الاختبار</button>
         </div>
       `;
       document.getElementById('restartQuizBtn').addEventListener('click', loadQuestions);
