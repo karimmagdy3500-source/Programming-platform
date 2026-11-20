@@ -7,9 +7,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    /* كلاسات التأثيرات الحركية المخصصة */
     .animate-fade-in {
-      animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
     .animate-shake {
       animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
@@ -19,7 +18,7 @@
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(12px); }
+      from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
@@ -40,17 +39,66 @@
 <body class="bg-slate-900 text-white min-h-screen p-6 font-sans">
 
   <div class="max-w-4xl mx-auto space-y-8">
-    <!-- رأس الصفحة وحالة الحساب -->
-    <header class="bg-slate-800 p-5 rounded-xl border border-slate-700 flex flex-wrap justify-between items-center gap-4 shadow-lg transition-all duration-300">
+    <!-- رأس الصفحة وحالة الحساب + قائمة البروفايل -->
+    <header class="bg-slate-800 p-5 rounded-xl border border-slate-700 flex flex-wrap justify-between items-center gap-4 shadow-lg transition-all duration-300 relative z-30">
       <div>
         <h1 class="text-2xl font-bold text-indigo-400">منصة البرمجة - الصف الأول الثانوي</h1>
         <p id="userStatus" class="text-xs text-slate-400 mt-1">وضع التجربة المباشرة (يمكنك تسجيل الدخول لحفظ درجاتك)</p>
       </div>
-      <div id="authArea" class="flex items-center gap-2"></div>
+      <div id="authArea" class="flex items-center gap-2 relative"></div>
     </header>
 
+    <!-- إعدادات الملف الشخصي (تعديل الاسم + رفع/حذف الصورة) -->
+    <section id="profileSettingsSection" class="bg-slate-800 p-6 rounded-xl border border-indigo-500/40 shadow-xl hidden animate-fade-in">
+      <div class="flex justify-between items-center mb-5 border-b border-slate-700 pb-3">
+        <div>
+          <h2 class="text-xl font-bold text-indigo-300">إعدادات الملف الشخصي</h2>
+          <p class="text-xs text-slate-400">تحكم في صورتك الشخصية واسمك الظاهر في المنصة</p>
+        </div>
+        <button id="closeProfileSettingsBtn" type="button" class="text-xs bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded transition-all duration-200 active:scale-95">إغلاق</button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+        <!-- منطقة الصورة الشخصية -->
+        <div class="flex flex-col items-center bg-slate-900/70 p-4 rounded-xl border border-slate-700/80">
+          <div id="settingsAvatarPreview" class="w-24 h-24 rounded-full overflow-hidden border-2 border-indigo-500/70 bg-slate-800 flex items-center justify-center mb-3 shadow-md"></div>
+
+          <label for="avatarFileInput" class="w-full text-center cursor-pointer bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold py-2 px-3 rounded-lg transition-all duration-200 active:scale-95">
+            تغيير / رفع صورة
+          </label>
+          <input id="avatarFileInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif" class="hidden" />
+
+          <button id="removeAvatarBtn" type="button" class="mt-2 w-full bg-rose-950/70 hover:bg-rose-900 text-rose-300 border border-rose-800/70 text-xs font-semibold py-1.5 px-3 rounded-lg transition-all duration-200 active:scale-95">
+            حذف الصورة الحالية
+          </button>
+          <span class="text-[11px] text-slate-400 mt-2">الحد الأقصى: 2 ميجابايت</span>
+        </div>
+
+        <!-- تعديل الاسم الكامل -->
+        <form id="profileNameForm" class="md:col-span-2 space-y-4">
+          <div>
+            <label class="block text-sm text-slate-300 mb-1">الاسم الكامل</label>
+            <input id="profileFullNameInput" type="text" required placeholder="اكتب اسمك الكامل"
+              class="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-sm focus:outline-none focus:border-indigo-500 transition-colors" />
+          </div>
+
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">البريد الإلكتروني</label>
+            <input id="profileEmailDisplay" type="text" disabled
+              class="w-full p-2.5 rounded-lg bg-slate-950/70 border border-slate-800 text-sm text-slate-400 cursor-not-allowed" />
+          </div>
+
+          <p id="profileMsg" class="text-xs min-h-[18px]"></p>
+
+          <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-lg font-bold text-sm transition-all duration-200 active:scale-95 shadow-md">
+            حفظ التغييرات
+          </button>
+        </form>
+      </div>
+    </section>
+
     <!-- لوحة المعلم / إضافة أسئلة جديدة (تظهر للأدمن فقط) -->
-    <section id="adminSection" class="bg-slate-800 p-6 rounded-xl border border-indigo-500/50 shadow-xl hidden transition-all duration-300 transform origin-top">
+    <section id="adminSection" class="bg-slate-800 p-6 rounded-xl border border-indigo-500/50 shadow-xl hidden transition-all duration-300">
       <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-3">
         <div>
           <h2 class="text-xl font-bold text-indigo-300">لوحة إضافة سؤال جديد (Admin)</h2>
@@ -168,11 +216,39 @@ console.log("ناتج الضرب =", a * b);</textarea>
 
     let currentUser = null;
     let studentName = '';
+    let avatarUrl = '';
     let isAdmin = false;
     let questions = [];
     let currentIndex = 0;
     let score = 0;
     let selectedOption = null;
+
+    function getInitials(name) {
+      const clean = (name || 'م').trim();
+      return clean.charAt(0).toUpperCase();
+    }
+
+    function renderAvatarMarkup(sizeClass = 'w-9 h-9', textClass = 'text-sm') {
+      if (avatarUrl) {
+        return `<img src="${avatarUrl}" alt="${studentName}" class="${sizeClass} rounded-full object-cover border border-indigo-400/60" />`;
+      }
+      return `<div class="${sizeClass} rounded-full bg-indigo-600/30 border border-indigo-500/50 text-indigo-200 font-bold flex items-center justify-center ${textClass}">${getInitials(studentName)}</div>`;
+    }
+
+    function refreshAvatarUI() {
+      const headerAvatarBox = document.getElementById('headerAvatarBox');
+      if (headerAvatarBox) {
+        headerAvatarBox.innerHTML = renderAvatarMarkup('w-9 h-9', 'text-sm');
+      }
+      const previewBox = document.getElementById('settingsAvatarPreview');
+      if (previewBox) {
+        previewBox.innerHTML = renderAvatarMarkup('w-24 h-24', 'text-2xl');
+      }
+      const removeBtn = document.getElementById('removeAvatarBtn');
+      if (removeBtn) {
+        removeBtn.classList.toggle('hidden', !avatarUrl);
+      }
+    }
 
     // تشغيل معمل JS
     const jsEditor = document.getElementById('jsEditor');
@@ -203,16 +279,22 @@ console.log("ناتج الضرب =", a * b);</textarea>
       }
     });
 
-    // التحكم في إظهار/إخفاء لوحة الإدارة
+    // التحكم في لوحة الأدمن
     const adminSection = document.getElementById('adminSection');
     const toggleAdminBtn = document.getElementById('toggleAdminBtn');
+
+    function openAdminPanel() {
+      if (!isAdmin) return;
+      document.getElementById('profileSettingsSection').classList.add('hidden');
+      adminSection.classList.remove('hidden');
+      adminSection.classList.add('animate-fade-in');
+      adminSection.scrollIntoView({ behavior: 'smooth' });
+    }
 
     toggleAdminBtn.addEventListener('click', () => {
       if (!isAdmin) return;
       if (adminSection.classList.contains('hidden')) {
-        adminSection.classList.remove('hidden');
-        adminSection.classList.add('animate-fade-in');
-        adminSection.scrollIntoView({ behavior: 'smooth' });
+        openAdminPanel();
       } else {
         adminSection.classList.add('hidden');
       }
@@ -220,6 +302,137 @@ console.log("ناتج الضرب =", a * b);</textarea>
 
     document.getElementById('closeAdminBtn').addEventListener('click', () => {
       adminSection.classList.add('hidden');
+    });
+
+    // إعدادات الملف الشخصي (الاسم + الصورة)
+    const profileSettingsSection = document.getElementById('profileSettingsSection');
+    const profileMsg = document.getElementById('profileMsg');
+
+    function openProfileSettings() {
+      if (!currentUser) return;
+      adminSection.classList.add('hidden');
+      profileSettingsSection.classList.remove('hidden');
+      document.getElementById('profileFullNameInput').value = studentName;
+      document.getElementById('profileEmailDisplay').value = currentUser.email || '';
+      profileMsg.textContent = '';
+      refreshAvatarUI();
+      profileSettingsSection.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    document.getElementById('closeProfileSettingsBtn').addEventListener('click', () => {
+      profileSettingsSection.classList.add('hidden');
+    });
+
+    document.getElementById('profileNameForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!currentUser) return;
+
+      const newName = document.getElementById('profileFullNameInput').value.trim();
+      if (!newName) return;
+
+      profileMsg.className = 'text-xs text-slate-400';
+      profileMsg.textContent = 'جاري حفظ الاسم...';
+
+      const { error } = await db
+        .from('profiles')
+        .update({ full_name: newName })
+        .eq('id', currentUser.id);
+
+      if (error) {
+        profileMsg.className = 'text-xs text-rose-400 animate-shake';
+        profileMsg.textContent = 'تعذر حفظ الاسم: ' + error.message;
+        return;
+      }
+
+      studentName = newName;
+      document.getElementById('userStatus').textContent = isAdmin
+        ? `مرحباً، ${studentName} (حساب أدمن — يمكنك إضافة الأسئلة)`
+        : `مرحباً، ${studentName} — درجاتك تُحفظ في حسابك`;
+
+      const menuNameEl = document.getElementById('dropdownUserName');
+      if (menuNameEl) menuNameEl.textContent = studentName;
+      refreshAvatarUI();
+
+      profileMsg.className = 'text-xs text-emerald-400 animate-pop';
+      profileMsg.textContent = 'تم تحديث الاسم بنجاح!';
+    });
+
+    // رفع صورة البروفايل
+    document.getElementById('avatarFileInput').addEventListener('change', async (e) => {
+      const file = e.target.files?.[0];
+      e.target.value = '';
+      if (!file || !currentUser) return;
+
+      if (file.size > 2 * 1024 * 1024) {
+        profileMsg.className = 'text-xs text-rose-400 animate-shake';
+        profileMsg.textContent = 'حجم الصورة أكبر من 2 ميجابايت.';
+        return;
+      }
+
+      profileMsg.className = 'text-xs text-slate-400';
+      profileMsg.textContent = 'جاري رفع الصورة...';
+
+      const ext = (file.name.split('.').pop() || 'png').toLowerCase().replace(/[^a-z0-9]/g, '');
+      const filePath = `${currentUser.id}/avatar.${ext}`;
+
+      const { error: uploadError } = await db.storage
+        .from('avatars')
+        .upload(filePath, file, { upsert: true, contentType: file.type });
+
+      if (uploadError) {
+        profileMsg.className = 'text-xs text-rose-400 animate-shake';
+        profileMsg.textContent = 'فشل رفع الصورة: ' + uploadError.message;
+        return;
+      }
+
+      const { data: pubData } = db.storage.from('avatars').getPublicUrl(filePath);
+      const freshUrl = `${pubData.publicUrl}?t=${Date.now()}`;
+
+      const { error: dbErr } = await db
+        .from('profiles')
+        .update({ avatar_url: freshUrl })
+        .eq('id', currentUser.id);
+
+      if (dbErr) {
+        profileMsg.className = 'text-xs text-rose-400 animate-shake';
+        profileMsg.textContent = 'تم الرفع لكن تعذر حفظ الرابط: ' + dbErr.message;
+        return;
+      }
+
+      avatarUrl = freshUrl;
+      refreshAvatarUI();
+      profileMsg.className = 'text-xs text-emerald-400 animate-pop';
+      profileMsg.textContent = 'تم تحديث صورة البروفايل بنجاح!';
+    });
+
+    // حذف صورة البروفايل
+    document.getElementById('removeAvatarBtn').addEventListener('click', async () => {
+      if (!currentUser || !avatarUrl) return;
+
+      profileMsg.className = 'text-xs text-slate-400';
+      profileMsg.textContent = 'جاري حذف الصورة...';
+
+      const { data: files } = await db.storage.from('avatars').list(currentUser.id);
+      if (files && files.length > 0) {
+        const pathsToRemove = files.map(f => `${currentUser.id}/${f.name}`);
+        await db.storage.from('avatars').remove(pathsToRemove);
+      }
+
+      const { error: dbErr } = await db
+        .from('profiles')
+        .update({ avatar_url: null })
+        .eq('id', currentUser.id);
+
+      if (dbErr) {
+        profileMsg.className = 'text-xs text-rose-400 animate-shake';
+        profileMsg.textContent = 'تعذر حذف الصورة: ' + dbErr.message;
+        return;
+      }
+
+      avatarUrl = '';
+      refreshAvatarUI();
+      profileMsg.className = 'text-xs text-emerald-400 animate-pop';
+      profileMsg.textContent = 'تم حذف صورة البروفايل.';
     });
 
     // نموذج إضافة سؤال لـ Supabase
@@ -262,17 +475,94 @@ console.log("ناتج الضرب =", a * b);</textarea>
       }
     });
 
+    function renderLoggedInHeader() {
+      const roleBadge = isAdmin
+        ? `<span class="inline-block mt-1 text-[11px] bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2 py-0.5 rounded-full font-semibold">أدمن</span>`
+        : `<span class="inline-block mt-1 text-[11px] bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 px-2 py-0.5 rounded-full font-semibold">طالب</span>`;
+
+      document.getElementById('authArea').innerHTML = `
+        <button id="profileMenuBtn" type="button" class="flex items-center gap-2.5 bg-slate-900/80 hover:bg-slate-700 border border-slate-600 px-3 py-1.5 rounded-xl transition-all duration-200 active:scale-95">
+          <span id="headerAvatarBox">${renderAvatarMarkup('w-9 h-9', 'text-sm')}</span>
+          <span class="text-right hidden sm:block">
+            <span class="block text-xs font-bold text-slate-100 leading-tight">${studentName}</span>
+            <span class="block text-[11px] text-slate-400 leading-tight">${isAdmin ? 'حساب أدمن' : 'حساب طالب'}</span>
+          </span>
+          <span class="text-xs text-slate-400">▾</span>
+        </button>
+
+        <div id="profileDropdown" class="hidden absolute left-0 top-14 w-64 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl p-2 z-50 animate-fade-in">
+          <div class="px-3 py-2.5 border-b border-slate-800 mb-1">
+            <p id="dropdownUserName" class="text-sm font-bold text-white truncate">${studentName}</p>
+            <p class="text-[11px] text-slate-400 truncate">${currentUser.email}</p>
+            ${roleBadge}
+          </div>
+
+          <button id="menuSettingsBtn" type="button" class="w-full text-right px-3 py-2 rounded-lg text-xs text-slate-200 hover:bg-slate-800 transition flex items-center justify-between">
+            <span>إعدادات الملف الشخصي</span>
+            <span>⚙️</span>
+          </button>
+
+          ${isAdmin ? `
+            <button id="menuAdminBtn" type="button" class="w-full text-right px-3 py-2 rounded-lg text-xs text-indigo-300 hover:bg-indigo-950/60 transition flex items-center justify-between">
+              <span>إضافة سؤال جديد</span>
+              <span>➕</span>
+            </button>
+          ` : ''}
+
+          <div class="border-t border-slate-800 mt-1 pt-1">
+            <button id="logoutBtn" type="button" class="w-full text-right px-3 py-2 rounded-lg text-xs text-rose-400 hover:bg-rose-950/50 font-semibold transition flex items-center justify-between">
+              <span>تسجيل خروج</span>
+              <span>↪</span>
+            </button>
+          </div>
+        </div>
+      `;
+
+      const menuBtn = document.getElementById('profileMenuBtn');
+      const dropdown = document.getElementById('profileDropdown');
+
+      menuBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        dropdown.classList.toggle('hidden');
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!dropdown.classList.contains('hidden') && !dropdown.contains(e.target) && !menuBtn.contains(e.target)) {
+          dropdown.classList.add('hidden');
+        }
+      });
+
+      document.getElementById('menuSettingsBtn').addEventListener('click', () => {
+        dropdown.classList.add('hidden');
+        openProfileSettings();
+      });
+
+      const menuAdminBtn = document.getElementById('menuAdminBtn');
+      if (menuAdminBtn) {
+        menuAdminBtn.addEventListener('click', () => {
+          dropdown.classList.add('hidden');
+          openAdminPanel();
+        });
+      }
+
+      document.getElementById('logoutBtn').addEventListener('click', async () => {
+        await db.auth.signOut();
+        location.reload();
+      });
+    }
+
     async function init() {
       const { data: { session } } = await db.auth.getSession();
       if (session?.user) {
         currentUser = session.user;
         const { data } = await db
           .from('profiles')
-          .select('full_name, role')
+          .select('full_name, role, avatar_url')
           .eq('id', currentUser.id)
           .single();
 
         studentName = data?.full_name || currentUser.user_metadata?.full_name || currentUser.email;
+        avatarUrl = data?.avatar_url || '';
         isAdmin = data?.role === 'admin';
 
         if (isAdmin) {
@@ -284,17 +574,13 @@ console.log("ناتج الضرب =", a * b);</textarea>
           document.getElementById('userStatus').textContent = `مرحباً، ${studentName} — درجاتك تُحفظ في حسابك`;
         }
 
-        document.getElementById('authArea').innerHTML = `
-          <button id="logoutBtn" class="bg-slate-700 hover:bg-rose-600 px-3 py-2 rounded-lg text-xs font-bold transition-all duration-200 active:scale-95 shadow">تسجيل خروج</button>
-        `;
-        document.getElementById('logoutBtn').addEventListener('click', async () => {
-          await db.auth.signOut();
-          location.reload();
-        });
+        renderLoggedInHeader();
       } else {
         isAdmin = false;
+        avatarUrl = '';
         toggleAdminBtn.classList.add('hidden');
         adminSection.classList.add('hidden');
+        profileSettingsSection.classList.add('hidden');
         document.getElementById('authArea').innerHTML = `
           <button id="openLoginBtn" class="bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded-lg text-xs font-bold transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 shadow-md">تسجيل دخول / حساب جديد</button>
         `;
@@ -435,7 +721,7 @@ console.log("ناتج الضرب =", a * b);</textarea>
           fb.innerHTML = `<p class="font-bold ${ok ? 'text-emerald-400' : 'text-rose-400'}">${ok ? 'إجابة صحيحة!' : 'إجابة خاطئة — الصح: ' + q.correct_option}</p>${q.explanation ? `<p class="text-slate-300 mt-1">${q.explanation}</p>` : ''}`;
           fb.className = `p-3 rounded-lg bg-slate-900 border border-slate-700 mb-3 text-sm animate-fade-in`;
           fb.classList.remove('hidden');
-          
+
           const qNext = document.getElementById('qNext');
           qNext.classList.remove('hidden');
           qNext.classList.add('animate-pop');
