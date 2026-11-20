@@ -16,10 +16,26 @@
     .animate-pop {
       animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
     }
+    .animate-float {
+      animation: floatY 3.6s ease-in-out infinite;
+    }
+    .animate-text-drop {
+      animation: textDrop 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
 
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes textDrop {
+      0% { opacity: 0; transform: translateY(-12px) scale(0.98); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes floatY {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-6px); }
     }
 
     @keyframes shake {
@@ -34,6 +50,25 @@
       50% { transform: scale(1.02); }
       100% { transform: scale(1); }
     }
+
+    /* انسيابية فتح وطي النصوص المنسدلة */
+    .accordion-panel {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .accordion-item.is-open .accordion-panel {
+      grid-template-rows: 1fr;
+    }
+    .accordion-inner {
+      overflow: hidden;
+    }
+    .accordion-chevron {
+      transition: transform 0.3s ease;
+    }
+    .accordion-item.is-open .accordion-chevron {
+      transform: rotate(180deg);
+    }
   </style>
 </head>
 <body class="bg-slate-900 text-white min-h-screen p-6 font-sans">
@@ -47,6 +82,76 @@
       </div>
       <div id="authArea" class="flex items-center gap-2 relative"></div>
     </header>
+
+    <!-- بانر تفاعلي بصورة كارتون لوجهك + نصوص منسدلة متحركة -->
+    <section id="heroBanner" class="relative overflow-hidden rounded-2xl border border-indigo-500/30 bg-gradient-to-l from-indigo-950/90 via-slate-800 to-slate-900 p-6 shadow-2xl animate-fade-in">
+      <div class="flex flex-col md:flex-row items-center gap-6">
+        <!-- صورة الكارتون في البانر (يمكنك استبدال رابط الصورة بصورتك الكارتونية) -->
+        <div class="shrink-0 flex flex-col items-center">
+          <div class="w-28 h-28 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-emerald-500/20 border-2 border-indigo-400/50 p-1.5 shadow-xl animate-float">
+            <img
+              id="bannerCartoonImg"
+              src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 160'%3E%3Cdefs%3E%3ClinearGradient id='bg' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23312e81'/%3E%3Cstop offset='100%25' stop-color='%230f172a'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='160' height='160' rx='28' fill='url(%23bg)'/%3E%3Ccircle cx='80' cy='86' r='42' fill='%23fcd34d'/%3E%3Cpath d='M38 74c4-28 28-44 46-44 22 0 38 14 38 42-10-12-25-18-42-18-16 0-30 8-42 20z' fill='%231e1b4b'/%3E%3Ccircle cx='65' cy='86' r='6' fill='%231e293b'/%3E%3Ccircle cx='95' cy='86' r='6' fill='%231e293b'/%3E%3Ccircle cx='67' cy='84' r='2' fill='%23ffffff'/%3E%3Ccircle cx='97' cy='84' r='2' fill='%23ffffff'/%3E%3Cpath d='M65 103q15 13 30 0' stroke='%23991b1b' stroke-width='4' fill='none' stroke-linecap='round'/%3E%3Cpath d='M42 138c6-16 20-24 38-24s32 8 38 24' fill='%234f46e5'/%3E%3C/svg%3E"
+              alt="صورة كارتون لوجهي"
+              class="w-full h-full object-cover rounded-xl bg-slate-900"
+            />
+          </div>
+          <span class="mt-2 text-[11px] font-semibold text-indigo-300 bg-indigo-950/80 border border-indigo-500/30 px-2.5 py-0.5 rounded-full">
+            أهلاً بك في المنصة
+          </span>
+        </div>
+
+        <!-- نصوص منسدلة ديناميكية + أكورديون تفاعلي -->
+        <div class="flex-1 w-full space-y-4 text-right">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <span class="text-xs font-bold text-emerald-400 tracking-wide">رسائل تفاعلية منسدلة</span>
+            <div class="flex items-center gap-1.5" id="tickerDots">
+              <button type="button" data-slide="0" class="ticker-btn px-2.5 py-1 rounded-md text-xs font-bold bg-indigo-600 text-white transition">1</button>
+              <button type="button" data-slide="1" class="ticker-btn px-2.5 py-1 rounded-md text-xs font-bold bg-slate-700 text-slate-300 hover:bg-slate-600 transition">2</button>
+              <button type="button" data-slide="2" class="ticker-btn px-2.5 py-1 rounded-md text-xs font-bold bg-slate-700 text-slate-300 hover:bg-slate-600 transition">3</button>
+            </div>
+          </div>
+
+          <!-- نص ينسدل حركياً عند التبديل -->
+          <div id="animatedTextBox" class="min-h-[68px] rounded-xl bg-slate-900/75 border border-slate-700/80 p-3.5 flex items-center">
+            <p id="animatedBannerText" class="text-sm md:text-base font-medium text-slate-100 leading-relaxed animate-text-drop">
+              ابدأ رحلتك في البرمجة خطوة بخطوة — جرّب الكود بنفسك في المعمل، وحل الاختبارات لتثبيت المعلومة.
+            </p>
+          </div>
+
+          <!-- نصوص إضافية تنسدل عند الضغط عليها -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <div class="accordion-item rounded-xl bg-slate-900/60 border border-slate-700/70">
+              <button type="button" class="accordion-trigger w-full px-3.5 py-2.5 flex items-center justify-between text-xs font-bold text-indigo-300 hover:text-indigo-200 transition">
+                <span>نصيحة قبل حل الاختبار</span>
+                <span class="accordion-chevron text-slate-400">▾</span>
+              </button>
+              <div class="accordion-panel">
+                <div class="accordion-inner">
+                  <p class="px-3.5 pb-3 text-xs text-slate-300 leading-relaxed">
+                    اقرأ الكود سطر بسطر وتوقع الناتج في دماغك قبل ما تختار الإجابة، وبعدها اقرأ الشرح لتفهم السبب.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-item rounded-xl bg-slate-900/60 border border-slate-700/70">
+              <button type="button" class="accordion-trigger w-full px-3.5 py-2.5 flex items-center justify-between text-xs font-bold text-emerald-300 hover:text-emerald-200 transition">
+                <span>كيف تستفيد من معمل JS؟</span>
+                <span class="accordion-chevron text-slate-400">▾</span>
+              </button>
+              <div class="accordion-panel">
+                <div class="accordion-inner">
+                  <p class="px-3.5 pb-3 text-xs text-slate-300 leading-relaxed">
+                    غيّر قيم المتغيرات وجرّب أخطاء مقصودة عشان تشوف شكل رسالة الخطأ وتتعلم تصلحها بسرعة.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <!-- إعدادات الملف الشخصي (تعديل الاسم + رفع/حذف الصورة) -->
     <section id="profileSettingsSection" class="bg-slate-800 p-6 rounded-xl border border-indigo-500/40 shadow-xl hidden animate-fade-in">
@@ -222,6 +327,48 @@ console.log("ناتج الضرب =", a * b);</textarea>
     let currentIndex = 0;
     let score = 0;
     let selectedOption = null;
+
+    // نصوص البانر المنسدلة التفاعلية
+    const bannerSlides = [
+      'ابدأ رحلتك في البرمجة خطوة بخطوة — جرّب الكود بنفسك في المعمل، وحل الاختبارات لتثبيت المعلومة.',
+      'البرمجة مش حفظ؛ هي تفكير منطقي وتجربة مستمرة. جرب تعدّل سطر في الكود وشوف النتيجة بتتغير إزاي!',
+      'كل سؤال بتحله صح وبتفهم شرحه بيقربك خطوة أكبر من إنك تكتب أكواد كاملة بثقة.'
+    ];
+    let currentSlide = 0;
+    const animatedBannerText = document.getElementById('animatedBannerText');
+    const tickerBtns = document.querySelectorAll('.ticker-btn');
+
+    function setBannerSlide(index) {
+      currentSlide = index % bannerSlides.length;
+      animatedBannerText.classList.remove('animate-text-drop');
+      void animatedBannerText.offsetWidth;
+      animatedBannerText.textContent = bannerSlides[currentSlide];
+      animatedBannerText.classList.add('animate-text-drop');
+
+      tickerBtns.forEach((btn, idx) => {
+        if (idx === currentSlide) {
+          btn.className = 'ticker-btn px-2.5 py-1 rounded-md text-xs font-bold bg-indigo-600 text-white transition';
+        } else {
+          btn.className = 'ticker-btn px-2.5 py-1 rounded-md text-xs font-bold bg-slate-700 text-slate-300 hover:bg-slate-600 transition';
+        }
+      });
+    }
+
+    tickerBtns.forEach((btn, idx) => {
+      btn.addEventListener('click', () => setBannerSlide(idx));
+    });
+
+    setInterval(() => {
+      setBannerSlide(currentSlide + 1);
+    }, 5500);
+
+    // أكورديون النصوص المنسدلة عند الضغط
+    document.querySelectorAll('.accordion-trigger').forEach(trigger => {
+      trigger.addEventListener('click', () => {
+        const item = trigger.closest('.accordion-item');
+        item.classList.toggle('is-open');
+      });
+    });
 
     function getInitials(name) {
       const clean = (name || 'م').trim();
