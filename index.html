@@ -56,7 +56,6 @@
       100% { transform: scale(1); }
     }
 
-    /* انسيابية فتح وطي النصوص المنسدلة */
     .accordion-panel {
       display: grid;
       grid-template-rows: 0fr;
@@ -103,7 +102,6 @@
     <!-- بانر ترحيبي مع صورة شخصية ومنحنى خلفي + نصوص منسدلة -->
     <section class="relative overflow-hidden rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-md p-6 sm:p-8 md:p-10 animate-fade-in transition-colors duration-300">
       <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
-        <!-- النص الترحيبي والرسائل المنسدلة -->
         <div class="md:col-span-7 space-y-4 text-right z-10">
           <div class="flex flex-wrap items-center gap-2.5">
             <h2 class="text-2xl sm:text-3xl font-extrabold text-indigo-700 dark:text-indigo-400">أهلاً بيكم منورين المنصة!</h2>
@@ -114,7 +112,6 @@
             هتتعلم <span class="font-bold text-indigo-700 dark:text-indigo-400">أساسيات البرمجة وJavaScript</span> بأسلوب بسيط وعملي، مع تدريبات تفاعلية، واختبارات فورية، ومذكرات PDF بتساعدك تفهم وتطبق خطوة بخطوة علشان تدخل التقييمات وأنت واثق.
           </p>
 
-          <!-- شريط رسائل متحركة تنسدل تلقائياً أو عند اختيار الرقم -->
           <div class="rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 p-3.5 space-y-2.5 transition-colors duration-300">
             <div class="flex items-center justify-between gap-2">
               <span class="text-[11px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-200 dark:border-emerald-800/70 px-2.5 py-0.5 rounded-full">رسائل تفاعلية</span>
@@ -129,7 +126,6 @@
             </p>
           </div>
 
-          <!-- نصوص إضافية تنسدل عند الضغط عليها -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
             <div class="accordion-item rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200/80 dark:border-slate-700/80 transition-colors duration-300">
               <button type="button" class="accordion-trigger w-full px-3.5 py-2.5 flex items-center justify-between text-xs font-bold text-indigo-700 dark:text-indigo-300 hover:text-indigo-800 dark:hover:text-indigo-200 transition">
@@ -161,7 +157,6 @@
           </div>
         </div>
 
-        <!-- صورة شخصية مع خلفية منحنية -->
         <div class="md:col-span-5 flex justify-center items-center relative">
           <div class="relative w-64 sm:w-72 h-72 sm:h-80 flex items-end justify-center">
             <svg viewBox="0 0 320 320" class="w-full h-full drop-shadow-sm" aria-hidden="true">
@@ -181,14 +176,19 @@
       </div>
     </section>
 
-    <!-- إعدادات الملف الشخصي (تعديل الاسم + تحديث/حذف الصورة) -->
-    <section id="profileSettingsSection" class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-indigo-200 dark:border-indigo-800/70 shadow-sm hidden animate-fade-in transition-colors duration-300">
-      <div class="flex justify-between items-center mb-5 border-b border-slate-100 dark:border-slate-800 pb-3">
+    <!-- إعدادات الملف الشخصي -->
+    <section id="profileSettingsSection" class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-indigo-200 dark:border-indigo-800/70 shadow-sm hidden animate-fade-in transition-colors duration-300 space-y-6">
+      <div class="flex flex-wrap justify-between items-center gap-3 border-b border-slate-100 dark:border-slate-800 pb-3">
         <div>
           <h2 class="text-xl font-bold text-indigo-700 dark:text-indigo-400">إعدادات الملف الشخصي</h2>
-          <p class="text-xs text-slate-500 dark:text-slate-400">تحكم في اسمك الظاهر وصورتك المعروضة في البانر</p>
+          <p class="text-xs text-slate-500 dark:text-slate-400">تحكم في اسمك الظاهر وصورتك وتابع وسامك وسجل آخر درجاتك</p>
         </div>
-        <button id="closeProfileSettingsBtn" type="button" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-lg font-semibold transition active:scale-95">إغلاق</button>
+        <div class="flex items-center gap-2">
+          <span id="studentBadgePill" class="text-xs font-extrabold px-3 py-1.5 rounded-xl border bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-300 dark:border-slate-700">
+            🌱 مبتدئ نشيط
+          </span>
+          <button id="closeProfileSettingsBtn" type="button" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-lg font-semibold transition active:scale-95">إغلاق</button>
+        </div>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
@@ -226,87 +226,127 @@
           </button>
         </form>
       </div>
+
+      <div class="pt-5 border-t border-slate-100 dark:border-slate-800 space-y-3">
+        <div class="flex items-center justify-between gap-2">
+          <div>
+            <h3 class="text-base font-extrabold text-indigo-700 dark:text-indigo-400">سجل آخر درجاتك</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">آخر المحاولات المحفوظة في حسابك من الاختبارات</p>
+          </div>
+          <button id="refreshScoresBtn" type="button" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-lg font-semibold transition active:scale-95">
+            تحديث السجل
+          </button>
+        </div>
+
+        <div id="quizHistoryContainer" class="rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 p-4">
+          <p class="text-xs text-slate-500 dark:text-slate-400">جاري تحميل سجل الدرجات...</p>
+        </div>
+      </div>
     </section>
 
-    <!-- لوحة المعلم / إضافة أسئلة جديدة (تظهر للأدمن فقط) -->
-    <section id="adminSection" class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-indigo-200 dark:border-indigo-800/70 shadow-sm hidden transition-all duration-300">
-      <div class="flex justify-between items-center mb-4 border-b border-slate-100 dark:border-slate-800 pb-3">
-        <div>
-          <h2 class="text-xl font-bold text-indigo-700 dark:text-indigo-400">لوحة إضافة سؤال جديد (Admin)</h2>
-          <p class="text-xs text-slate-500 dark:text-slate-400">أضف الأسئلة مباشرة لجدول Supabase ليراها كافة الطلاب</p>
+    <!-- لوحة الأدمن الكاملة -->
+    <section id="adminSection" class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-indigo-200 dark:border-indigo-800/70 shadow-sm hidden transition-all duration-300 space-y-8">
+      <div class="space-y-4">
+        <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-3">
+          <div>
+            <h2 id="questionFormHeading" class="text-xl font-bold text-indigo-700 dark:text-indigo-400">لوحة إدارة الأسئلة (Admin)</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">أضف أو عدّل الأسئلة مباشرة في Supabase ليراها كافة الطلاب</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button id="cancelQuestionEditBtn" type="button" class="hidden text-xs bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 text-slate-800 dark:text-slate-200 px-3 py-1.5 rounded-lg font-bold transition">إلغاء التعديل</button>
+            <button id="closeAdminBtn" type="button" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-lg font-semibold transition active:scale-95">إغلاق اللوحة</button>
+          </div>
         </div>
-        <button id="closeAdminBtn" type="button" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-lg font-semibold transition active:scale-95">إغلاق اللوحة</button>
+
+        <form id="addQuestionForm" class="space-y-4">
+          <input id="qEditId" type="hidden" />
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">نص السؤال *</label>
+            <input id="qTitle" type="text" required placeholder="مثال: ما هي الدالة المستخدمة لطباعة المخرجات في JavaScript؟" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:border-indigo-500 transition" />
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">كود برمجي مصاحب للسؤال (اختياري)</label>
+            <textarea id="qCode" dir="ltr" rows="3" placeholder="let x = 5;&#10;console.log(x);" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-emerald-400 font-mono text-sm text-left focus:outline-none focus:border-emerald-500 transition"></textarea>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">الخيار (A) *</label>
+              <input id="optA" type="text" required placeholder="الخيار الأول" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm text-slate-800 dark:text-slate-100 transition" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">الخيار (B) *</label>
+              <input id="optB" type="text" required placeholder="الخيار الثاني" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm text-slate-800 dark:text-slate-100 transition" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">الخيار (C) *</label>
+              <input id="optC" type="text" required placeholder="الخيار الثالث" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm text-slate-800 dark:text-slate-100 transition" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">الخيار (D) *</label>
+              <input id="optD" type="text" required placeholder="الخيار الرابع" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm text-slate-800 dark:text-slate-100 transition" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">الإجابة الصحيحة *</label>
+              <select id="correctOpt" required class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm text-slate-800 dark:text-slate-100 transition">
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+              </select>
+            </div>
+            <div class="md:col-span-2">
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">الشرح والتوضيح بعد الحل (اختياري)</label>
+              <input id="qExplanation" type="text" placeholder="مثال: الدالة console.log تتيح عرض البيانات في الشاشة" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm text-slate-800 dark:text-slate-100 transition" />
+            </div>
+          </div>
+
+          <p id="adminMsg" class="text-xs min-h-[16px]"></p>
+
+          <button id="saveQuestionBtn" type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-bold text-sm transition active:scale-[0.99] shadow-sm">
+            + حفظ وإضافة السؤال لبنك الأسئلة
+          </button>
+        </form>
       </div>
 
-      <form id="addQuestionForm" class="space-y-4">
-        <div>
-          <label class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">نص السؤال *</label>
-          <input id="qTitle" type="text" required placeholder="مثال: ما هي الدالة المستخدمة لطباعة المخرجات في JavaScript؟" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:border-indigo-500 transition" />
+      <div class="pt-5 border-t border-slate-100 dark:border-slate-800 space-y-4">
+        <h3 class="text-base font-extrabold text-indigo-700 dark:text-indigo-400">الأسئلة الحالية في بنك الأسئلة</h3>
+        <div id="adminQuestionsList" class="space-y-3">
+          <p class="text-xs text-slate-500 dark:text-slate-400">جاري تحميل الأسئلة للتحكم بها...</p>
         </div>
-
-        <div>
-          <label class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">كود برمجي مصاحب للسؤال (اختياري)</label>
-          <textarea id="qCode" dir="ltr" rows="3" placeholder="let x = 5;&#10;console.log(x);" class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-emerald-400 font-mono text-sm text-left focus:outline-none focus:border-emerald-500 transition"></textarea>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">الخيار (A) *</label>
-            <input id="optA" type="text" required placeholder="الخيار الأول" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm text-slate-800 dark:text-slate-100 transition" />
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">الخيار (B) *</label>
-            <input id="optB" type="text" required placeholder="الخيار الثاني" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm text-slate-800 dark:text-slate-100 transition" />
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">الخيار (C) *</label>
-            <input id="optC" type="text" required placeholder="الخيار الثالث" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm text-slate-800 dark:text-slate-100 transition" />
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">الخيار (D) *</label>
-            <input id="optD" type="text" required placeholder="الخيار الرابع" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm text-slate-800 dark:text-slate-100 transition" />
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">الإجابة الصحيحة *</label>
-            <select id="correctOpt" required class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm text-slate-800 dark:text-slate-100 transition">
-              <option value="A">A</option>
-              <option value="B">B</option>
-              <option value="C">C</option>
-              <option value="D">D</option>
-            </select>
-          </div>
-          <div class="md:col-span-2">
-            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">الشرح والتوضيح بعد الحل (اختياري)</label>
-            <input id="qExplanation" type="text" placeholder="مثال: الدالة console.log تتيح عرض البيانات في الشاشة" class="w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm text-slate-800 dark:text-slate-100 transition" />
-          </div>
-        </div>
-
-        <p id="adminMsg" class="text-xs"></p>
-
-        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-bold text-sm transition active:scale-[0.99] shadow-sm">
-          + حفظ وإضافة السؤال لبنك الأسئلة
-        </button>
-      </form>
+      </div>
     </section>
 
     <!-- قسم 1: الاختبارات -->
-    <section id="quizSection" class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-sm transition-all duration-300">
-      <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
+    <section id="quizSection" class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-sm transition-all duration-300 space-y-4">
+      <div class="flex flex-wrap justify-between items-center gap-3">
         <h2 class="text-xl font-bold text-indigo-700 dark:text-indigo-400">اختبارات مادة البرمجة</h2>
         <div class="flex items-center gap-3">
           <button id="toggleAdminBtn" type="button" class="hidden text-xs bg-indigo-50 dark:bg-indigo-950/70 hover:bg-indigo-100 dark:hover:bg-indigo-900/70 text-indigo-700 dark:text-indigo-300 px-3 py-1.5 rounded-xl border border-indigo-200 dark:border-indigo-800/70 font-bold transition active:scale-95">
-            + إضافة سؤال
+            ⚙️ لوحة الأسئلة (الأدمن)
           </button>
           <span id="scoreBadge" class="bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/70 px-3 py-1 rounded-full text-sm font-bold">النقاط: 0</span>
         </div>
       </div>
-      <div id="quizContent" class="text-slate-600 dark:text-slate-300 text-center py-6">جاري تحميل الأسئلة...</div>
+
+      <div class="space-y-1.5">
+        <div class="flex justify-between items-center text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+          <span id="quizProgressLabel">نسبة التقدم</span>
+          <span id="quizProgressPct">0%</span>
+        </div>
+        <div class="w-full h-2 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+          <div id="quizProgressBar" class="h-full w-0 bg-indigo-600 dark:bg-indigo-500 rounded-full transition-all duration-300"></div>
+        </div>
+      </div>
+
+      <div id="quizContent" class="text-slate-600 dark:text-slate-300 text-center py-4">جاري تحميل الأسئلة...</div>
     </section>
 
-    <!-- قسم 2: مذكرات وكتب PDF (الكل يقرأها والأدمن فقط يضيف ويعدل ويحذف) -->
+    <!-- قسم 2: مذكرات وكتب PDF -->
     <section id="pdfSection" class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-sm space-y-5 transition-colors duration-300">
       <div class="flex flex-wrap justify-between items-center gap-3 border-b border-slate-100 dark:border-slate-800 pb-4">
         <div>
@@ -318,7 +358,6 @@
         </button>
       </div>
 
-      <!-- نموذج إضافة وتعديل PDF للأدمن فقط -->
       <div id="pdfAdminBox" class="hidden rounded-2xl bg-indigo-50/60 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800/70 p-5 space-y-4 animate-fade-in">
         <div class="flex justify-between items-center">
           <h3 id="pdfFormHeading" class="text-sm font-extrabold text-indigo-800 dark:text-indigo-300">إضافة كتاب أو مذكرة PDF جديدة</h3>
@@ -364,22 +403,24 @@
         </form>
       </div>
 
-      <!-- قائمة الكتب والمذكرات المعروضة للطلاب -->
       <div id="pdfListContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="text-slate-500 dark:text-slate-400 text-sm py-4">جاري تحميل المذكرات والكتب...</div>
       </div>
     </section>
 
-    <!-- قسم 3: معمل JavaScript -->
-    <section id="jsLabSection" class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-sm transition-all duration-300">
-      <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
+    <!-- قسم 3: معمل JavaScript المتقدم -->
+    <section id="jsLabSection" class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-sm transition-all duration-300 space-y-5">
+      <div class="flex flex-wrap justify-between items-center gap-3">
         <div>
           <h2 class="text-xl font-bold text-indigo-700 dark:text-indigo-400">معمل JavaScript التفاعلي</h2>
-          <p class="text-xs text-slate-500 dark:text-slate-400">اكتب كود JavaScript وجرّبه فوراً من المتصفح</p>
+          <p class="text-xs text-slate-500 dark:text-slate-400">اكتب كود JavaScript وجرّبه فوراً، أو اختر مثالاً جاهزاً أو تحدياً عملياً</p>
         </div>
-        <div class="flex gap-2">
+        <div class="flex flex-wrap gap-2">
           <button id="runJsBtn" type="button" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-bold transition hover:-translate-y-0.5 active:translate-y-0 active:scale-95 shadow-sm">
             ▶ تشغيل الكود
+          </button>
+          <button id="checkChallengeBtn" type="button" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-sm font-bold transition hover:-translate-y-0.5 active:translate-y-0 active:scale-95 shadow-sm">
+            ✓ تحقق من النتيجة
           </button>
           <button id="clearJsBtn" type="button" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-3 py-2 rounded-xl text-sm font-semibold transition active:scale-95">
             مسح الناتج
@@ -387,8 +428,45 @@
         </div>
       </div>
 
+      <div class="space-y-2">
+        <span class="block text-xs font-bold text-slate-600 dark:text-slate-300">أمثلة جاهزة للتجربة السريعة:</span>
+        <div class="flex flex-wrap gap-2" id="jsPresetsBar">
+          <button type="button" data-preset="vars" class="preset-btn text-xs font-bold px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-950/70 text-slate-700 dark:text-slate-200 hover:text-indigo-700 dark:hover:text-indigo-300 border border-slate-200 dark:border-slate-700 transition">
+            المتغيرات والحساب
+          </button>
+          <button type="button" data-preset="cond" class="preset-btn text-xs font-bold px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-950/70 text-slate-700 dark:text-slate-200 hover:text-indigo-700 dark:hover:text-indigo-300 border border-slate-200 dark:border-slate-700 transition">
+            الجمل الشرطية (if/else)
+          </button>
+          <button type="button" data-preset="loop" class="preset-btn text-xs font-bold px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-950/70 text-slate-700 dark:text-slate-200 hover:text-indigo-700 dark:hover:text-indigo-300 border border-slate-200 dark:border-slate-700 transition">
+            الحلقات التكرارية (for)
+          </button>
+          <button type="button" data-preset="func" class="preset-btn text-xs font-bold px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-950/70 text-slate-700 dark:text-slate-200 hover:text-indigo-700 dark:hover:text-indigo-300 border border-slate-200 dark:border-slate-700 transition">
+            الدوال (function)
+          </button>
+        </div>
+      </div>
+
+      <div class="rounded-2xl bg-indigo-50/50 dark:bg-indigo-950/25 border border-indigo-200/80 dark:border-indigo-800/60 p-4 space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <span class="text-xs font-extrabold text-indigo-800 dark:text-indigo-300">🎯 تحديات الكود (بمخرج متوقع):</span>
+          <div class="flex flex-wrap gap-1.5" id="challengeTabs">
+            <button type="button" data-ch="0" class="ch-tab text-xs font-bold px-2.5 py-1 rounded-lg bg-indigo-600 text-white transition">تحدي 1</button>
+            <button type="button" data-ch="1" class="ch-tab text-xs font-bold px-2.5 py-1 rounded-lg bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition">تحدي 2</button>
+            <button type="button" data-ch="2" class="ch-tab text-xs font-bold px-2.5 py-1 rounded-lg bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition">تحدي 3</button>
+          </div>
+        </div>
+
+        <div id="challengeCard" class="space-y-2 text-right">
+          <p id="challengeTitle" class="text-sm font-bold text-slate-800 dark:text-slate-100"></p>
+          <p id="challengeDesc" class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed"></p>
+          <div class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">المخرج المتوقع في الـ Console:</div>
+          <pre id="challengeExpected" dir="ltr" class="p-2.5 rounded-xl bg-slate-900 text-amber-300 font-mono text-xs text-left border border-slate-800 overflow-x-auto"></pre>
+          <p id="challengeCheckResult" class="text-xs font-bold min-h-[18px]"></p>
+        </div>
+      </div>
+
       <textarea id="jsEditor" dir="ltr" rows="8"
-        class="w-full p-4 rounded-xl bg-slate-900 text-emerald-300 font-mono text-sm border border-slate-700 focus:outline-none focus:border-indigo-500 mb-4 text-left transition">// اكتب كود JavaScript هنا واضغط "تشغيل الكود"
+        class="w-full p-4 rounded-xl bg-slate-900 text-emerald-300 font-mono text-sm border border-slate-700 focus:outline-none focus:border-indigo-500 text-left transition">// اكتب كود JavaScript هنا واضغط "تشغيل الكود"
 let student = "بطل أولى ثانوي";
 let a = 7;
 let b = 8;
@@ -399,6 +477,22 @@ console.log("ناتج الضرب =", a * b);</textarea>
       <div class="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5">المخرجات (Console Output):</div>
       <pre id="jsOutput" dir="ltr"
         class="w-full min-h-[100px] max-h-60 overflow-y-auto p-4 rounded-xl bg-slate-950 text-slate-200 font-mono text-sm border border-slate-800 text-left transition-all duration-300">النتيجة هتظهر هنا أول ما تضغط "تشغيل الكود"...</pre>
+
+      <div class="accordion-item rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200/80 dark:border-slate-700/80 transition-colors duration-300">
+        <button type="button" class="accordion-trigger w-full px-4 py-3 flex items-center justify-between text-xs font-bold text-slate-700 dark:text-slate-200">
+          <span>⚠️ دليل الأخطاء الشائعة للمبتدئين في JavaScript</span>
+          <span class="accordion-chevron text-slate-500 dark:text-slate-400">▾</span>
+        </button>
+        <div class="accordion-panel">
+          <div class="accordion-inner">
+            <div class="px-4 pb-4 space-y-2 text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+              <p><strong class="text-rose-600 dark:text-rose-400">SyntaxError:</strong> خطأ في صياغة الكتابة (مثل نسيان قوس <code>)</code> أو علامة تنصيص أو فاصلة منقوطة).</p>
+              <p><strong class="text-amber-600 dark:text-amber-400">ReferenceError:</strong> استخدام متغير لم يتم تعريفه بعد بـ <code>let</code> أو <code>const</code>، أو خطأ إملائي في اسم المتغير.</p>
+              <p><strong class="text-indigo-600 dark:text-indigo-400">TypeError:</strong> محاولة تنفيذ عملية غير مناسبة لنوع القيمة (مثل استدعاء متغير عادي كأنه دالة).</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
   </div>
 
@@ -409,7 +503,47 @@ console.log("ناتج الضرب =", a * b);</textarea>
     const { createClient } = window.supabase;
     const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // إدارة الوضع الليلي والنهاري (Light / Dark Mode)
+    // إعداد الأوسمة — عدّل الأسماء أو النسب أو الأيقونات من هنا بسهولة
+    const STUDENT_BADGES = [
+      {
+        minPct: 85,
+        label: 'بطل البرمجة',
+        icon: '🏆',
+        classes: 'bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-700'
+      },
+      {
+        minPct: 70,
+        label: 'متميز أولى ثانوي',
+        icon: '⭐',
+        classes: 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700'
+      },
+      {
+        minPct: 50,
+        label: 'مستكشف كود',
+        icon: '💻',
+        classes: 'bg-indigo-100 dark:bg-indigo-950/80 text-indigo-800 dark:text-indigo-300 border-indigo-300 dark:border-indigo-700'
+      },
+      {
+        minPct: 0,
+        label: 'مبتدئ نشيط',
+        icon: '🌱',
+        classes: 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-300 dark:border-slate-700'
+      }
+    ];
+
+    function getBadgeForAverage(avgPct) {
+      return STUDENT_BADGES.find(b => avgPct >= b.minPct) || STUDENT_BADGES[STUDENT_BADGES.length - 1];
+    }
+
+    function updateStudentBadgeUI(avgPct) {
+      const badgeEl = document.getElementById('studentBadgePill');
+      if (!badgeEl) return;
+      const badge = getBadgeForAverage(avgPct);
+      badgeEl.className = `text-xs font-extrabold px-3 py-1.5 rounded-xl border ${badge.classes}`;
+      badgeEl.textContent = `${badge.icon} ${badge.label} (${Math.round(avgPct)}%)`;
+    }
+
+    // إدارة الوضع الليلي والنهاري
     const THEME_STORAGE_KEY = 'platform_theme_mode';
     const themeToggleBtn = document.getElementById('themeToggleBtn');
     const themeIcon = document.getElementById('themeIcon');
@@ -479,7 +613,6 @@ console.log("ناتج الضرب =", a * b);</textarea>
       setBannerSlide(currentSlide + 1);
     }, 5500);
 
-    // أكورديون النصوص المنسدلة عند الضغط
     document.querySelectorAll('.accordion-trigger').forEach(trigger => {
       trigger.addEventListener('click', () => {
         const item = trigger.closest('.accordion-item');
@@ -516,44 +649,151 @@ console.log("ناتج الضرب =", a * b);</textarea>
       }
     }
 
-    // تشغيل معمل JS
+    // أمثلة وتحديات معمل JavaScript
+    const jsPresets = {
+      vars: `let name = "أحمد";\nlet score = 18;\nlet fullMark = 20;\n\nconsole.log("الطالب:", name);\nconsole.log("النسبة:", (score / fullMark) * 100 + "%");`,
+      cond: `let degree = 75;\n\nif (degree >= 50) {\n  console.log("ناجح");\n} else {\n  console.log("يحتاج مراجعة");\n}`,
+      loop: `for (let i = 1; i <= 5; i++) {\n  console.log("الخطوة رقم " + i);\n}`,
+      func: `function square(num) {\n  return num * num;\n}\n\nconsole.log("مربع الرقم 6 =", square(6));`
+    };
+
+    const jsChallenges = [
+      {
+        title: 'التحدي 1: طباعة الأرقام الزوجية من 2 إلى 8',
+        desc: 'اكتب حلقة تكرارية تطبع الأرقام الزوجية 2، 4، 6، 8 كل رقم في سطر مستقل.',
+        expected: '2\n4\n6\n8',
+        starter: `for (let i = 2; i <= 8; i += 2) {\n  console.log(i);\n}`
+      },
+      {
+        title: 'التحدي 2: حساب مساحة مستطيل',
+        desc: 'احسب مساحة مستطيل طوله 6 وعرضه 4 واطبع الناتج فقط في الـ Console.',
+        expected: '24',
+        starter: `let length = 6;\nlet width = 4;\nconsole.log(length * width);`
+      },
+      {
+        title: 'التحدي 3: رسالة ترحيب بالطالب',
+        desc: 'اطبع العبارة التالية تماماً: مرحباً بكم في منصة البرمجة',
+        expected: 'مرحباً بكم في منصة البرمجة',
+        starter: `console.log("مرحباً بكم في منصة البرمجة");`
+      }
+    ];
+
+    let activeChallengeIdx = 0;
     const jsEditor = document.getElementById('jsEditor');
     const jsOutput = document.getElementById('jsOutput');
+    const challengeTitle = document.getElementById('challengeTitle');
+    const challengeDesc = document.getElementById('challengeDesc');
+    const challengeExpected = document.getElementById('challengeExpected');
+    const challengeCheckResult = document.getElementById('challengeCheckResult');
 
-    document.getElementById('clearJsBtn').addEventListener('click', () => {
-      jsOutput.className = 'w-full min-h-[100px] max-h-60 overflow-y-auto p-4 rounded-xl bg-slate-950 text-slate-400 font-mono text-sm border border-slate-800 text-left transition-all duration-300 animate-pop';
-      jsOutput.textContent = 'تم مسح المخرجات.';
+    function renderChallenge(idx) {
+      activeChallengeIdx = idx;
+      const ch = jsChallenges[idx];
+      challengeTitle.textContent = ch.title;
+      challengeDesc.textContent = ch.desc;
+      challengeExpected.textContent = ch.expected;
+      challengeCheckResult.textContent = '';
+
+      document.querySelectorAll('.ch-tab').forEach((tab, i) => {
+        if (i === idx) {
+          tab.className = 'ch-tab text-xs font-bold px-2.5 py-1 rounded-lg bg-indigo-600 text-white transition';
+        } else {
+          tab.className = 'ch-tab text-xs font-bold px-2.5 py-1 rounded-lg bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition';
+        }
+      });
+    }
+
+    document.querySelectorAll('.ch-tab').forEach((tab, idx) => {
+      tab.addEventListener('click', () => renderChallenge(idx));
     });
 
-    document.getElementById('runJsBtn').addEventListener('click', () => {
-      const code = jsEditor.value;
+    document.querySelectorAll('.preset-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const key = btn.getAttribute('data-preset');
+        if (jsPresets[key]) {
+          jsEditor.value = jsPresets[key];
+          challengeCheckResult.textContent = '';
+        }
+      });
+    });
+
+    function executeUserCode(code) {
       const logs = [];
       const customConsole = {
         log: (...args) => logs.push(args.map(v => typeof v === 'object' ? JSON.stringify(v, null, 2) : String(v)).join(' ')),
         warn: (...args) => logs.push('[تنبيه] ' + args.join(' ')),
         error: (...args) => logs.push('[خطأ] ' + args.join(' '))
       };
+      const fn = new Function('console', code);
+      fn(customConsole);
+      return logs.join('\n');
+    }
 
+    document.getElementById('clearJsBtn').addEventListener('click', () => {
+      jsOutput.className = 'w-full min-h-[100px] max-h-60 overflow-y-auto p-4 rounded-xl bg-slate-950 text-slate-400 font-mono text-sm border border-slate-800 text-left transition-all duration-300 animate-pop';
+      jsOutput.textContent = 'تم مسح المخرجات.';
+      challengeCheckResult.textContent = '';
+    });
+
+    document.getElementById('runJsBtn').addEventListener('click', () => {
       try {
-        const fn = new Function('console', code);
-        fn(customConsole);
+        const outputText = executeUserCode(jsEditor.value);
         jsOutput.className = 'w-full min-h-[100px] max-h-60 overflow-y-auto p-4 rounded-xl bg-slate-950 text-emerald-400 font-mono text-sm border border-slate-800 text-left transition-all duration-300 animate-pop';
-        jsOutput.textContent = logs.length ? logs.join('\n') : 'تم التنفيذ بنجاح (لا يوجد console.log).';
+        jsOutput.textContent = outputText || 'تم التنفيذ بنجاح (لا يوجد console.log).';
       } catch (err) {
         jsOutput.className = 'w-full min-h-[100px] max-h-60 overflow-y-auto p-4 rounded-xl bg-slate-950 text-rose-400 font-mono text-sm border border-rose-900 text-left transition-all duration-300 animate-shake';
         jsOutput.textContent = 'خطأ في الكود:\n' + err.message;
       }
     });
 
-    // التحكم في لوحة الأدمن للأسئلة
+    document.getElementById('checkChallengeBtn').addEventListener('click', () => {
+      const ch = jsChallenges[activeChallengeIdx];
+      try {
+        const actual = executeUserCode(jsEditor.value).trim();
+        jsOutput.className = 'w-full min-h-[100px] max-h-60 overflow-y-auto p-4 rounded-xl bg-slate-950 text-emerald-400 font-mono text-sm border border-slate-800 text-left transition-all duration-300 animate-pop';
+        jsOutput.textContent = actual || 'تم التنفيذ بنجاح (لا يوجد console.log).';
+
+        if (actual === ch.expected.trim()) {
+          challengeCheckResult.className = 'text-xs font-bold text-emerald-600 dark:text-emerald-400 animate-pop';
+          challengeCheckResult.textContent = '🎉 أحسنت! النتيجة مطابقة للمخرج المتوقع تماماً.';
+        } else {
+          challengeCheckResult.className = 'text-xs font-bold text-amber-700 dark:text-amber-300 animate-shake';
+          challengeCheckResult.textContent = 'النتيجة الحالية مختلفة عن المتوقع — راجع السطور وجرّب مرة أخرى.';
+        }
+      } catch (err) {
+        jsOutput.className = 'w-full min-h-[100px] max-h-60 overflow-y-auto p-4 rounded-xl bg-slate-950 text-rose-400 font-mono text-sm border border-rose-900 text-left transition-all duration-300 animate-shake';
+        jsOutput.textContent = 'خطأ في الكود:\n' + err.message;
+        challengeCheckResult.className = 'text-xs font-bold text-rose-600 dark:text-rose-400';
+        challengeCheckResult.textContent = 'يوجد خطأ برمجي في الكود، صحّحه أولاً ثم أعد التحقق.';
+      }
+    });
+
+    renderChallenge(0);
+
+    // إدارة لوحة الأدمن للأسئلة
     const adminSection = document.getElementById('adminSection');
     const toggleAdminBtn = document.getElementById('toggleAdminBtn');
+    const qEditIdInput = document.getElementById('qEditId');
+    const questionFormHeading = document.getElementById('questionFormHeading');
+    const saveQuestionBtn = document.getElementById('saveQuestionBtn');
+    const cancelQuestionEditBtn = document.getElementById('cancelQuestionEditBtn');
+    const adminQuestionsList = document.getElementById('adminQuestionsList');
+
+    function resetQuestionForm() {
+      qEditIdInput.value = '';
+      document.getElementById('addQuestionForm').reset();
+      questionFormHeading.textContent = 'لوحة إدارة الأسئلة (Admin)';
+      saveQuestionBtn.textContent = '+ حفظ وإضافة السؤال لبنك الأسئلة';
+      cancelQuestionEditBtn.classList.add('hidden');
+      document.getElementById('adminMsg').textContent = '';
+    }
 
     function openAdminPanel() {
       if (!isAdmin) return;
       document.getElementById('profileSettingsSection').classList.add('hidden');
       adminSection.classList.remove('hidden');
       adminSection.classList.add('animate-fade-in');
+      renderAdminQuestionsList();
       adminSection.scrollIntoView({ behavior: 'smooth' });
     }
 
@@ -568,9 +808,223 @@ console.log("ناتج الضرب =", a * b);</textarea>
 
     document.getElementById('closeAdminBtn').addEventListener('click', () => {
       adminSection.classList.add('hidden');
+      resetQuestionForm();
     });
 
-    // إعدادات الملف الشخصي (الاسم + الصورة)
+    cancelQuestionEditBtn.addEventListener('click', resetQuestionForm);
+
+    function populateQuestionFormForEdit(q) {
+      qEditIdInput.value = q.id;
+      document.getElementById('qTitle').value = q.title || '';
+      document.getElementById('qCode').value = q.code_snippet || '';
+      document.getElementById('optA').value = q.option_a || '';
+      document.getElementById('optB').value = q.option_b || '';
+      document.getElementById('optC').value = q.option_c || '';
+      document.getElementById('optD').value = q.option_d || '';
+      document.getElementById('correctOpt').value = q.correct_option || 'A';
+      document.getElementById('qExplanation').value = q.explanation || '';
+
+      questionFormHeading.textContent = `تعديل السؤال #${q.id}`;
+      saveQuestionBtn.textContent = 'تحديث بيانات السؤال';
+      cancelQuestionEditBtn.classList.remove('hidden');
+      adminSection.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    async function deleteQuestion(id) {
+      if (!isAdmin) return;
+      const { error } = await db.from('questions').delete().eq('id', Number(id));
+      if (error) {
+        alert('تعذر حذف السؤال: ' + error.message);
+      } else {
+        await loadQuestions();
+        renderAdminQuestionsList();
+      }
+    }
+
+    function renderAdminQuestionsList() {
+      if (!adminQuestionsList) return;
+
+      if (!questions.length) {
+        adminQuestionsList.innerHTML = `<p class="text-xs text-slate-500 dark:text-slate-400">لا توجد أسئلة حالياً لبنك الأسئلة.</p>`;
+        return;
+      }
+
+      adminQuestionsList.innerHTML = questions.map((q, idx) => `
+        <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div class="space-y-1.5 flex-1 text-right">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded-md">سؤال #${idx + 1}</span>
+              <h4 class="text-sm font-bold text-slate-800 dark:text-slate-100">${q.title}</h4>
+            </div>
+            ${q.code_snippet ? `<pre dir="ltr" class="text-[11px] bg-slate-900 text-emerald-400 p-2 rounded-lg font-mono text-left max-h-24 overflow-y-auto">${q.code_snippet}</pre>` : ''}
+            <div class="grid grid-cols-2 gap-1.5 text-xs text-slate-600 dark:text-slate-300 pt-1">
+              <span class="${q.correct_option === 'A' ? 'font-bold text-emerald-600 dark:text-emerald-400' : ''}">A: ${q.option_a}</span>
+              <span class="${q.correct_option === 'B' ? 'font-bold text-emerald-600 dark:text-emerald-400' : ''}">B: ${q.option_b}</span>
+              <span class="${q.correct_option === 'C' ? 'font-bold text-emerald-600 dark:text-emerald-400' : ''}">C: ${q.option_c}</span>
+              <span class="${q.correct_option === 'D' ? 'font-bold text-emerald-600 dark:text-emerald-400' : ''}">D: ${q.option_d}</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 justify-end border-t md:border-t-0 border-slate-200 dark:border-slate-700 pt-2 md:pt-0">
+            <button type="button" data-qedit="${q.id}" class="q-edit-btn text-xs bg-amber-50 dark:bg-amber-950/60 hover:bg-amber-100 dark:hover:bg-amber-900/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800/70 px-3 py-1.5 rounded-lg font-bold transition active:scale-95">
+              تعديل
+            </button>
+            <button type="button" data-qdel="${q.id}" class="q-del-btn text-xs bg-rose-50 dark:bg-rose-950/60 hover:bg-rose-100 dark:hover:bg-rose-900/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800/70 px-3 py-1.5 rounded-lg font-bold transition active:scale-95">
+              حذف
+            </button>
+          </div>
+        </div>
+      `).join('');
+
+      adminQuestionsList.querySelectorAll('.q-edit-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const qId = btn.getAttribute('data-qedit');
+          const target = questions.find(x => String(x.id) === String(qId));
+          if (target) populateQuestionFormForEdit(target);
+        });
+      });
+
+      adminQuestionsList.querySelectorAll('.q-del-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const qId = btn.getAttribute('data-qdel');
+          if (qId) deleteQuestion(qId);
+        });
+      });
+    }
+
+    document.getElementById('addQuestionForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!isAdmin) return;
+
+      const adminMsg = document.getElementById('adminMsg');
+      adminMsg.className = 'text-xs text-slate-500 dark:text-slate-400';
+      adminMsg.textContent = 'جاري الحفظ...';
+
+      const editId = qEditIdInput.value.trim();
+      const payload = {
+        title: document.getElementById('qTitle').value.trim(),
+        code_snippet: document.getElementById('qCode').value.trim() || null,
+        option_a: document.getElementById('optA').value.trim(),
+        option_b: document.getElementById('optB').value.trim(),
+        option_c: document.getElementById('optC').value.trim(),
+        option_d: document.getElementById('optD').value.trim(),
+        correct_option: document.getElementById('correctOpt').value,
+        explanation: document.getElementById('qExplanation').value.trim() || null
+      };
+
+      let res;
+      if (editId) {
+        res = await db.from('questions').update(payload).eq('id', Number(editId));
+      } else {
+        res = await db.from('questions').insert([payload]);
+      }
+
+      if (res.error) {
+        adminMsg.className = 'text-xs text-rose-600 dark:text-rose-400 font-semibold animate-shake';
+        adminMsg.textContent = 'تعذر الحفظ: ' + res.error.message;
+      } else {
+        adminMsg.className = 'text-xs text-emerald-700 dark:text-emerald-400 font-bold animate-pop';
+        adminMsg.textContent = editId ? 'تم تحديث بيانات السؤال بنجاح!' : 'تمت إضافة السؤال بنجاح!';
+        resetQuestionForm();
+        await loadQuestions();
+        renderAdminQuestionsList();
+      }
+    });
+
+    // سجل آخر درجات الطالب وتحديث الوسام
+    const quizHistoryContainer = document.getElementById('quizHistoryContainer');
+
+    function formatScoreDate(isoString) {
+      if (!isoString) return 'تاريخ غير محدد';
+      const date = new Date(isoString);
+      if (Number.isNaN(date.getTime())) return 'تاريخ غير محدد';
+      return date.toLocaleString('ar-EG', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+
+    async function loadQuizHistory() {
+      if (!currentUser) {
+        quizHistoryContainer.innerHTML = `<p class="text-xs text-slate-500 dark:text-slate-400">سجّل دخولك لعرض سجل آخر درجاتك.</p>`;
+        updateStudentBadgeUI(0);
+        return;
+      }
+
+      quizHistoryContainer.innerHTML = `<p class="text-xs text-slate-500 dark:text-slate-400">جاري تحميل سجل الدرجات...</p>`;
+
+      const { data, error } = await db
+        .from('quiz_results')
+        .select('*')
+        .eq('student_id', currentUser.id)
+        .order('id', { ascending: false })
+        .limit(10);
+
+      if (error) {
+        quizHistoryContainer.innerHTML = `<p class="text-xs text-rose-600 dark:text-rose-400 animate-shake">تعذر تحميل السجل: ${error.message}</p>`;
+        return;
+      }
+
+      const rows = data || [];
+      if (!rows.length) {
+        updateStudentBadgeUI(0);
+        quizHistoryContainer.innerHTML = `<p class="text-xs text-slate-500 dark:text-slate-400">لم تقم بإنهاء أي اختبار بعد. جرّب حل الاختبار لتظهر نتيجتك هنا.</p>`;
+        return;
+      }
+
+      const percentages = rows.map(r => {
+        const total = Number(r.total_questions) || 0;
+        const s = Number(r.score) || 0;
+        return total > 0 ? (s / total) * 100 : 0;
+      });
+      const avgPct = percentages.reduce((acc, v) => acc + v, 0) / percentages.length;
+      updateStudentBadgeUI(avgPct);
+
+      quizHistoryContainer.innerHTML = `
+        <div class="overflow-x-auto">
+          <table class="w-full text-right text-xs border-collapse">
+            <thead>
+              <tr class="border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400">
+                <th class="py-2.5 px-3 font-bold">المحاولة</th>
+                <th class="py-2.5 px-3 font-bold">الدرجة</th>
+                <th class="py-2.5 px-3 font-bold">النسبة</th>
+                <th class="py-2.5 px-3 font-bold">التاريخ</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200/70 dark:divide-slate-700/70">
+              ${rows.map((row, index) => {
+                const total = Number(row.total_questions) || 0;
+                const s = Number(row.score) || 0;
+                const pct = total > 0 ? Math.round((s / total) * 100) : 0;
+                const badgeClass = pct >= 75
+                  ? 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/70'
+                  : pct >= 50
+                    ? 'bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800/70'
+                    : 'bg-rose-100 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800/70';
+                const stamp = row.created_at || row.inserted_at || '';
+
+                return `
+                  <tr class="hover:bg-white/70 dark:hover:bg-slate-800/80 transition">
+                    <td class="py-2.5 px-3 font-bold text-slate-700 dark:text-slate-200">#${index + 1}</td>
+                    <td class="py-2.5 px-3 font-extrabold text-indigo-700 dark:text-indigo-400">${s} / ${total}</td>
+                    <td class="py-2.5 px-3">
+                      <span class="inline-block px-2 py-0.5 rounded-full border text-[11px] font-bold ${badgeClass}">${pct}%</span>
+                    </td>
+                    <td class="py-2.5 px-3 text-slate-500 dark:text-slate-400">${formatScoreDate(stamp)}</td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    document.getElementById('refreshScoresBtn').addEventListener('click', loadQuizHistory);
+
+    // إعدادات الملف الشخصي
     const profileSettingsSection = document.getElementById('profileSettingsSection');
     const profileMsg = document.getElementById('profileMsg');
 
@@ -582,6 +1036,7 @@ console.log("ناتج الضرب =", a * b);</textarea>
       document.getElementById('profileEmailDisplay').value = currentUser.email || '';
       profileMsg.textContent = '';
       refreshAvatarUI();
+      loadQuizHistory();
       profileSettingsSection.scrollIntoView({ behavior: 'smooth' });
     }
 
@@ -623,7 +1078,6 @@ console.log("ناتج الضرب =", a * b);</textarea>
       profileMsg.textContent = 'تم تحديث الاسم بنجاح!';
     });
 
-    // رفع صورة البروفايل
     document.getElementById('avatarFileInput').addEventListener('change', async (e) => {
       const file = e.target.files?.[0];
       e.target.value = '';
@@ -671,7 +1125,6 @@ console.log("ناتج الضرب =", a * b);</textarea>
       profileMsg.textContent = 'تم تحديث الصورة بنجاح!';
     });
 
-    // حذف صورة البروفايل والعودة لصورة me.jpg
     document.getElementById('removeAvatarBtn').addEventListener('click', async () => {
       if (!currentUser || !avatarUrl) return;
 
@@ -702,7 +1155,7 @@ console.log("ناتج الضرب =", a * b);</textarea>
       profileMsg.textContent = 'تم حذف الصورة المرفوعة والعودة للصورة الافتراضية.';
     });
 
-    // إدارة مذكرات وكتب PDF (للأدمن فقط)
+    // إدارة مذكرات وكتب PDF
     const togglePdfAdminBtn = document.getElementById('togglePdfAdminBtn');
     const pdfAdminBox = document.getElementById('pdfAdminBox');
     const pdfResourceForm = document.getElementById('pdfResourceForm');
@@ -860,46 +1313,6 @@ console.log("ناتج الضرب =", a * b);</textarea>
       }
     }
 
-    // نموذج إضافة سؤال لـ Supabase
-    document.getElementById('addQuestionForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      if (!isAdmin) return;
-
-      const adminMsg = document.getElementById('adminMsg');
-      adminMsg.className = 'text-xs text-slate-500 dark:text-slate-400';
-      adminMsg.textContent = 'جاري حفظ السؤال...';
-
-      const title = document.getElementById('qTitle').value.trim();
-      const code_snippet = document.getElementById('qCode').value.trim() || null;
-      const option_a = document.getElementById('optA').value.trim();
-      const option_b = document.getElementById('optB').value.trim();
-      const option_c = document.getElementById('optC').value.trim();
-      const option_d = document.getElementById('optD').value.trim();
-      const correct_option = document.getElementById('correctOpt').value;
-      const explanation = document.getElementById('qExplanation').value.trim() || null;
-
-      const { error } = await db.from('questions').insert([{
-        title,
-        code_snippet,
-        option_a,
-        option_b,
-        option_c,
-        option_d,
-        correct_option,
-        explanation
-      }]);
-
-      if (error) {
-        adminMsg.className = 'text-xs text-rose-600 dark:text-rose-400 font-semibold animate-shake';
-        adminMsg.textContent = 'تعذر إضافة السؤال: ' + error.message;
-      } else {
-        adminMsg.className = 'text-xs text-emerald-700 dark:text-emerald-400 font-bold animate-pop';
-        adminMsg.textContent = 'تمت إضافة السؤال بنجاح! جاري تحديث بنك الأسئلة...';
-        document.getElementById('addQuestionForm').reset();
-        await loadQuestions();
-      }
-    });
-
     function renderLoggedInHeader() {
       const roleBadge = isAdmin
         ? `<span class="inline-block mt-1 text-[11px] bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800/70 px-2 py-0.5 rounded-full font-bold">أدمن</span>`
@@ -923,14 +1336,14 @@ console.log("ناتج الضرب =", a * b);</textarea>
           </div>
 
           <button id="menuSettingsBtn" type="button" class="w-full text-right px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center justify-between">
-            <span>إعدادات الملف الشخصي</span>
+            <span>إعدادات الملف الشخصي والوسام</span>
             <span>⚙️</span>
           </button>
 
           ${isAdmin ? `
             <button id="menuAdminBtn" type="button" class="w-full text-right px-3 py-2 rounded-xl text-xs font-bold text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-950/60 transition flex items-center justify-between">
-              <span>إضافة سؤال جديد</span>
-              <span>➕</span>
+              <span>إدارة بنك الأسئلة</span>
+              <span>✏️</span>
             </button>
           ` : ''}
 
@@ -997,7 +1410,7 @@ console.log("ناتج الضرب =", a * b);</textarea>
         if (isAdmin) {
           toggleAdminBtn.classList.remove('hidden');
           togglePdfAdminBtn.classList.remove('hidden');
-          document.getElementById('userStatus').textContent = `مرحباً، ${studentName} (حساب أدمن — يمكنك إضافة الأسئلة وإدارة ملفات PDF)`;
+          document.getElementById('userStatus').textContent = `مرحباً، ${studentName} (حساب أدمن — يمكنك إدارة الأسئلة ومذكرات PDF)`;
         } else {
           toggleAdminBtn.classList.add('hidden');
           togglePdfAdminBtn.classList.add('hidden');
@@ -1007,6 +1420,7 @@ console.log("ناتج الضرب =", a * b);</textarea>
         }
 
         renderLoggedInHeader();
+        await loadQuizHistory();
       } else {
         isAdmin = false;
         avatarUrl = '';
@@ -1075,10 +1489,18 @@ console.log("ناتج الضرب =", a * b);</textarea>
       });
     }
 
+    function updateQuizProgress(pct) {
+      const clamped = Math.max(0, Math.min(100, Math.round(pct)));
+      document.getElementById('quizProgressBar').style.width = `${clamped}%`;
+      document.getElementById('quizProgressPct').textContent = `${clamped}%`;
+    }
+
     async function loadQuestions() {
       currentIndex = 0;
       score = 0;
       document.getElementById('scoreBadge').textContent = 'النقاط: 0';
+      updateQuizProgress(0);
+      document.getElementById('quizProgressLabel').textContent = 'نسبة التقدم';
       document.getElementById('quizContent').innerHTML = '<div class="text-slate-500 dark:text-slate-400 py-6">جاري تحميل الأسئلة...</div>';
 
       const { data, error } = await db.from('questions').select('*').order('id', { ascending: true });
@@ -1101,6 +1523,9 @@ console.log("ناتج الضرب =", a * b);</textarea>
       }
       const q = questions[currentIndex];
       selectedOption = null;
+
+      document.getElementById('quizProgressLabel').textContent = `السؤال ${currentIndex + 1} من ${questions.length}`;
+      updateQuizProgress(((currentIndex + 1) / questions.length) * 100);
 
       let html = `
         <div class="text-right animate-fade-in">
@@ -1169,6 +1594,9 @@ console.log("ناتج الضرب =", a * b);</textarea>
     }
 
     async function finishQuiz() {
+      updateQuizProgress(100);
+      document.getElementById('quizProgressLabel').textContent = 'اكتمل الاختبار';
+
       let savedNote = '';
       if (currentUser) {
         const { error } = await db.from('quiz_results').insert({
@@ -1176,11 +1604,14 @@ console.log("ناتج الضرب =", a * b);</textarea>
           score,
           total_questions: questions.length
         });
-        savedNote = error
-          ? `<p class="text-xs text-rose-600 dark:text-rose-400 mb-3 animate-shake">تعذر حفظ النتيجة: ${error.message}</p>`
-          : `<p class="text-xs text-emerald-700 dark:text-emerald-400 font-semibold mb-3 animate-pop">تم حفظ نتيجتك في حسابك!</p>`;
+        if (error) {
+          savedNote = `<p class="text-xs text-rose-600 dark:text-rose-400 mb-3 animate-shake">تعذر حفظ النتيجة: ${error.message}</p>`;
+        } else {
+          savedNote = `<p class="text-xs text-emerald-700 dark:text-emerald-400 font-semibold mb-3 animate-pop">تم حفظ نتيجتك وتحديث وسامك في حسابك!</p>`;
+          await loadQuizHistory();
+        }
       } else {
-        savedNote = `<p class="text-xs text-slate-500 dark:text-slate-400 mb-3">سجّل دخولك عشان تتحفظ نتيجتك في حسابك.</p>`;
+        savedNote = `<p class="text-xs text-slate-500 dark:text-slate-400 mb-3">سجّل دخولك عشان تتحفظ نتيجتك ويظهر وسامك في حسابك.</p>`;
       }
 
       document.getElementById('quizContent').innerHTML = `
