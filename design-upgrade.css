@@ -1,0 +1,250 @@
+/* ============================================================
+   design-upgrade.css — منصة البرمجة (الصف الأول الثانوي)
+   يُضاف قبل </head> بعد وسم Tailwind:
+   <link rel="stylesheet" href="design-upgrade.css">
+   لا يغيّر أي id أو data-* أو JavaScript أو Supabase.
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+:root {
+  --bg: #F2F4FA; --surface: #FFFFFF; --surface-2: #F6F7FC; --line: #E1E5F0;
+  --ink: #171B34; --muted: #5F6A87;
+  --primary: #4F46E5; --primary-2: #7C6CFF; --accent: #F4B13E;
+  --ok: #10B981; --bad: #F43F5E;
+  --code-bg: #0E1222; --code-line: #232B47; --code-ink: #9AF0C8;
+  --shadow: 0 1px 2px rgba(23,27,52,.05), 0 14px 30px -18px rgba(23,27,52,.22);
+  --ring: rgba(79,70,229,.38);
+  --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+html.dark {
+  --bg: #0A0E1A; --surface: #121829; --surface-2: #171F35; --line: #222C46;
+  --ink: #E8EBF7; --muted: #94A0BD;
+  --primary: #8B8FFF; --primary-2: #A78BFA; --accent: #F6C25B;
+  --code-bg: #070A14; --code-line: #1E2742; --code-ink: #8FEBC0;
+  --shadow: 0 1px 0 rgba(255,255,255,.035) inset, 0 18px 36px -20px rgba(0,0,0,.7);
+  --ring: rgba(139,143,255,.5);
+}
+
+/* ---------- الأساس ---------- */
+html { scroll-padding-top: 96px; }
+html body {
+  font-family: 'IBM Plex Sans Arabic', 'Segoe UI', Tahoma, system-ui, sans-serif !important;
+  background-color: var(--bg) !important;
+  background-image: radial-gradient(color-mix(in srgb, var(--muted) 22%, transparent) 1px, transparent 1.2px);
+  background-size: 22px 22px;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+}
+html body > div { padding-top: 20px; padding-bottom: 56px; }
+html body > div.space-y-8 > * + * { margin-top: 28px !important; }
+
+:focus-visible { outline: 2px solid var(--primary) !important; outline-offset: 3px !important; border-radius: 10px; }
+input:focus, textarea:focus, select:focus { box-shadow: 0 0 0 4px var(--ring) !important; border-color: var(--primary) !important; outline: none !important; }
+button, a, label { -webkit-tap-highlight-color: transparent; }
+button { font-family: inherit; }
+button:disabled { cursor: not-allowed; }
+::selection { background: var(--ring); }
+* { scrollbar-width: thin; scrollbar-color: color-mix(in srgb, var(--muted) 45%, transparent) transparent; }
+
+/* ---------- الشريط العلوي ---------- */
+html body > div > header {
+  position: sticky; top: 12px;
+  background: color-mix(in srgb, var(--surface) 86%, transparent) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 20px !important;
+  box-shadow: var(--shadow) !important;
+  padding: 12px 18px !important;
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+}
+html body > div > header .font-extrabold.text-xl { display: inline-flex; align-items: center; gap: 10px; color: var(--ink) !important; font-size: 1.15rem; }
+html body > div > header .font-extrabold.text-xl::before {
+  content: "</>"; direction: ltr; unicode-bidi: isolate;
+  font: 700 .72rem var(--mono); color: #fff;
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  padding: 6px 8px; border-radius: 10px; line-height: 1;
+}
+#themeToggleBtn { border-radius: 12px !important; background: var(--surface-2) !important; border-color: var(--line) !important; }
+#profileMenuBtn { border-radius: 14px !important; background: var(--surface-2) !important; border-color: var(--line) !important; }
+#profileDropdown { border-radius: 18px !important; background: var(--surface) !important; border-color: var(--line) !important; box-shadow: 0 24px 48px -16px rgba(10,14,26,.35) !important; }
+
+/* ---------- البانر الترحيبي ---------- */
+html body > div > header + section {
+  position: relative; isolation: isolate;
+  background: var(--surface) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 28px !important;
+  box-shadow: var(--shadow) !important;
+  padding: clamp(22px, 4vw, 44px) !important;
+}
+html body > div > header + section::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(600px 280px at 0% 0%, color-mix(in srgb, var(--primary) 14%, transparent), transparent 70%),
+    radial-gradient(color-mix(in srgb, var(--primary) 24%, transparent) 1px, transparent 1.3px) 0 0 / 18px 18px;
+  -webkit-mask-image: linear-gradient(to right, #000 0%, transparent 62%);
+  mask-image: linear-gradient(to right, #000 0%, transparent 62%);
+}
+html body > div > header + section h2 { color: var(--ink) !important; font-size: clamp(1.55rem, 3.4vw, 2.2rem) !important; line-height: 1.35; font-weight: 700 !important; }
+html body > div > header + section p { color: var(--muted); }
+html body > div > header + section p .font-bold { color: var(--primary) !important; }
+html body > div > header + section .rounded-2xl.bg-slate-50 { background: var(--surface-2) !important; border: 1px solid var(--line) !important; border-radius: 18px !important; }
+#animatedBannerText { color: var(--ink) !important; padding-inline-start: 12px; border-inline-start: 3px solid var(--accent); }
+.ticker-btn { min-width: 28px; border-radius: 9px !important; font-variant-numeric: tabular-nums; }
+#heroPhotoImg {
+  border-radius: 26px !important; border: 5px solid var(--surface) !important;
+  box-shadow: 0 0 0 1px var(--line), 0 22px 40px -18px rgba(23,27,52,.45) !important;
+}
+
+/* ---------- الأكورديون ---------- */
+.accordion-item { background: var(--surface-2) !important; border: 1px solid var(--line) !important; border-radius: 16px !important; }
+.accordion-item.is-open { border-color: color-mix(in srgb, var(--primary) 45%, var(--line)) !important; }
+.accordion-trigger { padding: 12px 16px !important; border-radius: 16px; }
+.accordion-trigger span:first-child { color: var(--ink); }
+.accordion-inner p, .accordion-inner > div { color: var(--muted); }
+.accordion-inner code { font-family: var(--mono); background: var(--code-bg); color: var(--code-ink); padding: 1px 6px; border-radius: 6px; direction: ltr; unicode-bidi: isolate; }
+
+/* ---------- البطاقات الرئيسية ---------- */
+#quizSection, #pdfSection, #jsLabSection, #profileSettingsSection, #adminSection {
+  background: var(--surface) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 26px !important;
+  box-shadow: var(--shadow) !important;
+  padding: clamp(18px, 3vw, 32px) !important;
+}
+#profileSettingsSection, #adminSection { border-color: color-mix(in srgb, var(--primary) 40%, var(--line)) !important; }
+#quizSection h2, #pdfSection h2, #jsLabSection h2, #profileSettingsSection h2, #adminSection h2 {
+  display: flex; align-items: center; gap: 12px;
+  color: var(--ink) !important; font-size: 1.3rem !important; font-weight: 700 !important;
+}
+#quizSection h2::before, #pdfSection h2::before, #jsLabSection h2::before, #profileSettingsSection h2::before, #adminSection h2::before {
+  content: ""; width: 5px; height: 1.25em; border-radius: 4px;
+  background: linear-gradient(180deg, var(--primary), var(--primary-2));
+}
+#quizSection p.text-xs, #pdfSection p.text-xs, #jsLabSection p.text-xs, #profileSettingsSection p.text-xs, #adminSection p.text-xs { color: var(--muted) !important; }
+#quizSection .border-b, #pdfSection .border-b, #profileSettingsSection .border-b, #adminSection .border-b,
+#profileSettingsSection .border-t, #adminSection .border-t { border-color: var(--line) !important; }
+#profileSettingsSection .bg-slate-50, #profileSettingsSection .rounded-xl.bg-slate-50 { background: var(--surface-2) !important; border-color: var(--line) !important; border-radius: 18px !important; }
+#settingsAvatarPreview { width: 104px !important; height: 104px !important; border: 3px solid var(--primary) !important; box-shadow: 0 0 0 5px color-mix(in srgb, var(--primary) 16%, transparent); }
+
+/* ---------- الأوسمة ---------- */
+#scoreBadge {
+  background: color-mix(in srgb, var(--accent) 22%, var(--surface)) !important;
+  color: var(--ink) !important;
+  border: 1px solid color-mix(in srgb, var(--accent) 60%, var(--line)) !important;
+  font-variant-numeric: tabular-nums; padding: 5px 14px !important;
+}
+#studentBadgePill { border-radius: 14px !important; padding: 8px 14px !important; font-size: .8rem !important; box-shadow: 0 6px 16px -10px rgba(23,27,52,.4); }
+
+/* ---------- شريط التقدم ---------- */
+#quizSection div:has(> #quizProgressBar) {
+  height: 12px !important; background: var(--surface-2) !important;
+  box-shadow: inset 0 0 0 1px var(--line); border-radius: 999px !important;
+}
+#quizProgressBar {
+  background: linear-gradient(270deg, var(--primary), var(--primary-2)) !important;
+  border-radius: 999px !important; position: relative;
+  box-shadow: 0 0 14px -2px var(--ring);
+  transition: width .5s cubic-bezier(.22,1,.36,1) !important;
+}
+#quizProgressPct { color: var(--primary); font-variant-numeric: tabular-nums; font-weight: 700; }
+
+/* ---------- الاختبار ---------- */
+#quizContent h3 { color: var(--ink) !important; line-height: 1.6; }
+#quizContent pre, #adminQuestionsList pre {
+  background: var(--code-bg) !important; color: var(--code-ink) !important;
+  border: 1px solid var(--code-line) !important; border-radius: 16px !important;
+  font-family: var(--mono) !important; font-size: .85rem; line-height: 1.8; padding: 16px 18px !important;
+}
+#quizContent pre::before, #jsOutput::before {
+  content: ""; display: block; width: 54px; height: 10px; margin-bottom: 12px;
+  background:
+    radial-gradient(circle 5px at 5px 5px, #FF5F57 98%, #0000) 0 0 / 54px 10px no-repeat,
+    radial-gradient(circle 5px at 27px 5px, #FEBC2E 98%, #0000) 0 0 / 54px 10px no-repeat,
+    radial-gradient(circle 5px at 49px 5px, #28C840 98%, #0000) 0 0 / 54px 10px no-repeat;
+}
+.opt-btn {
+  background: var(--surface-2) !important; border: 2px solid var(--line) !important;
+  border-radius: 16px !important; padding: 14px 16px !important; min-height: 56px;
+}
+.opt-btn:not(:disabled):hover { border-color: var(--primary) !important; background: color-mix(in srgb, var(--primary) 8%, var(--surface)) !important; }
+.opt-btn > span:first-child {
+  min-width: 32px; height: 32px; display: grid; place-items: center; padding: 0 !important;
+  border-radius: 50% !important; font-family: var(--mono); font-size: .8rem !important;
+  background: var(--surface) !important; border: 1px solid var(--line) !important; color: var(--ink) !important;
+}
+.opt-btn > span:last-child { color: var(--ink) !important; font-size: .95rem !important; }
+.opt-btn.border-emerald-500 { background: color-mix(in srgb, var(--ok) 12%, var(--surface)) !important; border-color: var(--ok) !important; }
+.opt-btn.border-emerald-500 > span:first-child { background: var(--ok) !important; border-color: var(--ok) !important; color: #fff !important; }
+.opt-btn.border-rose-400 { background: color-mix(in srgb, var(--bad) 11%, var(--surface)) !important; border-color: var(--bad) !important; }
+.opt-btn.border-rose-400 > span:first-child { background: var(--bad) !important; border-color: var(--bad) !important; color: #fff !important; }
+#qFeedback { background: var(--surface-2) !important; border: 1px solid var(--line) !important; border-radius: 16px !important; padding: 14px 16px !important; }
+#qNext, #restartQuizBtn { border-radius: 14px !important; padding-block: 12px !important; background: linear-gradient(135deg, var(--primary), var(--primary-2)) !important; color: #fff !important; font-weight: 700; }
+
+/* ---------- سجل الدرجات ---------- */
+#quizHistoryContainer { background: var(--surface-2) !important; border: 1px solid var(--line) !important; border-radius: 18px !important; }
+#quizHistoryContainer table { border-collapse: separate; border-spacing: 0; }
+#quizHistoryContainer th { font-weight: 600; font-size: .72rem; color: var(--muted); }
+#quizHistoryContainer td, #quizHistoryContainer th { padding: 10px 12px !important; font-variant-numeric: tabular-nums; }
+#quizHistoryContainer tbody tr:hover { background: color-mix(in srgb, var(--primary) 6%, transparent); }
+
+/* ---------- مذكرات PDF ---------- */
+#pdfListContainer { gap: 16px !important; }
+#pdfListContainer > div:not(.col-span-full) {
+  background: var(--surface-2) !important; border: 1px solid var(--line) !important;
+  border-inline-start: 4px solid var(--primary) !important;
+  border-radius: 18px !important; padding: 18px !important;
+}
+#pdfListContainer > div:not(.col-span-full):hover { border-color: var(--primary) !important; box-shadow: 0 14px 28px -20px var(--ring); }
+#pdfListContainer h3 { color: var(--ink) !important; font-size: .98rem !important; line-height: 1.6; }
+#pdfListContainer a { border-radius: 12px !important; background: linear-gradient(135deg, var(--primary), var(--primary-2)) !important; color: #fff !important; }
+#pdfAdminBox { background: color-mix(in srgb, var(--primary) 7%, var(--surface)) !important; border-color: color-mix(in srgb, var(--primary) 35%, var(--line)) !important; border-radius: 20px !important; }
+
+/* ---------- لوحة الأدمن ---------- */
+#adminQuestionsList > div { background: var(--surface-2) !important; border: 1px solid var(--line) !important; border-radius: 18px !important; }
+#adminSection input, #adminSection select, #profileSettingsSection input:not([type=file]), #pdfAdminBox input, #pdfAdminBox select, #quizContent input {
+  border-radius: 12px !important; border: 1px solid var(--line) !important; background: var(--surface-2) !important; color: var(--ink) !important;
+}
+#adminSection textarea, #qCode { background: var(--code-bg) !important; border: 1px solid var(--code-line) !important; border-radius: 14px !important; font-family: var(--mono) !important; line-height: 1.7; }
+
+/* ---------- معمل JavaScript ---------- */
+#jsLabSection .preset-btn { border-radius: 999px !important; padding: 7px 14px !important; background: var(--surface-2) !important; border: 1px solid var(--line) !important; color: var(--ink) !important; }
+#jsLabSection .preset-btn:hover { border-color: var(--primary) !important; color: var(--primary) !important; background: color-mix(in srgb, var(--primary) 8%, var(--surface)) !important; }
+#jsLabSection div:has(> #challengeCard) {
+  background: var(--surface-2) !important; border: 1px dashed color-mix(in srgb, var(--primary) 50%, var(--line)) !important;
+  border-radius: 20px !important; padding: 18px !important;
+}
+#challengeTitle { color: var(--ink) !important; font-size: 1rem !important; }
+#challengeDesc { color: var(--muted) !important; }
+.ch-tab { border-radius: 10px !important; padding: 5px 12px !important; }
+.ch-tab:not(.bg-indigo-600) { background: var(--surface) !important; border: 1px solid var(--line) !important; color: var(--ink) !important; }
+.ch-tab.bg-indigo-600 { background: var(--primary) !important; color: #fff !important; }
+#challengeExpected { background: var(--code-bg) !important; border: 1px solid var(--code-line) !important; border-radius: 12px !important; font-family: var(--mono) !important; color: #FFD479 !important; }
+
+#runJsBtn, #checkChallengeBtn { border-radius: 12px !important; padding: 10px 18px !important; box-shadow: 0 8px 18px -10px var(--ring); }
+#runJsBtn { background: linear-gradient(135deg, var(--primary), var(--primary-2)) !important; color: #fff !important; }
+#clearJsBtn { background: var(--surface-2) !important; border: 1px solid var(--line) !important; border-radius: 12px !important; color: var(--ink) !important; }
+
+#jsEditor {
+  background: var(--code-bg) !important; color: var(--code-ink) !important;
+  border: 1px solid var(--code-line) !important; border-top: 3px solid var(--primary) !important;
+  border-radius: 18px !important; padding: 18px 20px !important;
+  font-family: var(--mono) !important; font-size: .9rem !important; line-height: 1.85; tab-size: 2; caret-color: var(--accent); resize: vertical;
+}
+#jsOutput {
+  background: var(--code-bg) !important; border: 1px solid var(--code-line) !important;
+  border-radius: 18px !important; font-family: var(--mono) !important; font-size: .88rem !important;
+  line-height: 1.8; padding: 16px 20px !important; min-height: 120px !important;
+}
+#jsLabSection .text-xs.font-semibold.mb-1\.5 { color: var(--muted) !important; }
+
+/* ---------- حركة وتجاوب ---------- */
+@media (max-width: 640px) {
+  html body > div { padding-inline: 12px; }
+  html body > div > header { top: 8px; padding: 10px 12px !important; }
+  #heroPhotoImg { width: 11rem !important; height: 14rem !important; }
+  #runJsBtn, #checkChallengeBtn, #clearJsBtn { flex: 1 1 auto; justify-content: center; }
+  .opt-btn { padding: 12px 12px !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
