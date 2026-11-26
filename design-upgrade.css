@@ -248,3 +248,14 @@ html body > div > header + section .rounded-2xl.bg-slate-50 { background: var(--
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
 }
+/* AI Tutor Modal Drawer Animation */
+#aiTutorModal:not(.hidden) #aiTutorContainer {
+  transform: translateX(0);
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
